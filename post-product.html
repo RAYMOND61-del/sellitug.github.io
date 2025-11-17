@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Post Product — Sell-It UG</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header container">
+    <div class="logo">Sell-It UG</div>
+    <nav><a href="index.html">Home</a> <a href="products.html">Products</a> <a href="#" id="logoutLink">Logout</a></nav>
+  </header>
+
+  <main class="container form-card">
+    <h1>Post a Product</h1>
+    <form id="postForm">
+      <label>Title<input id="title" required/></label>
+      <label>Description<textarea id="description" rows="4"></textarea></label>
+      <label>Price (UGX)<input id="price" type="number" min="0" required/></label>
+      <label>Category<select id="category"><option>General</option><option>Fashion</option><option>Electronics</option></select></label>
+      <label>Image<input id="imageFile" type="file" accept="image/*" /></label>
+      <button type="submit" class="btn">Post Product</button>
+    </form>
+    <p id="postMsg" class="msg"></p>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    // ensure user is verified before allowing posting
+    onAuthReady(async (user) => {
+      if (!user) {
+        alert('You must be logged in to post. Redirecting to login.');
+        location.href = 'login.html';
+        return;
+      }
+      if (!user.emailVerified) {
+        alert('Please verify your email (check inbox) before posting.');
+        location.href = 'index.html';
+        return;
+      }
+      // continue: handle post form
+      document.getElementById('postForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const title = document.getElementById('title').value.trim();
+        const description = document.getElementById('description').value.trim();
+        const price = Number(document.getElementById('price').value);
+        const category = document.getElementById('category').value;
+        const imgFile = document.getElementById('imageFile').files[0];
+
+        const msgEl = document.getElementById('postMsg');
+        msgEl.textContent = 'Posting product...';
+
+        try {
+          await postProduct({ title, description, price, category, imgFile }); // app.js helper
+          msgEl.textContent = 'Product posted successfully!';
+          document.getElementById('postForm').reset();
+        } catch (err) {
+          msgEl.textContent = 'Error: ' + err.message;
+        }
+      });
+    });
+
+    // logout link
+    document.getElementById('logoutLink').addEventListener('click', async (e) => {
+      e.preventDefault();
+      await logoutUser();
+      location.href = 'index.html';
+    });
+  </script>
+</body>
+</html>

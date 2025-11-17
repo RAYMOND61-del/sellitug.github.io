@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Register — Sell-It UG</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header container">
+    <div class="logo">Sell-It UG</div>
+    <nav><a href="index.html">Home</a> <a href="login.html">Login</a></nav>
+  </header>
+
+  <main class="container form-card">
+    <h1>Create free account</h1>
+    <form id="registerForm">
+      <label>Full name<input id="fullName" type="text" required /></label>
+      <label>Email<input id="email" type="email" required /></label>
+      <label>Phone<input id="phone" type="tel" /></label>
+      <label>Business Type
+        <select id="business">
+          <option value="other">Other</option>
+          <option value="fashion">Fashion</option>
+          <option value="electronics">Electronics</option>
+          <option value="food">Food</option>
+          <option value="handmade">Handmade</option>
+        </select>
+      </label>
+      <label>Password<input id="password" type="password" required minlength="6" /></label>
+      <button type="submit" class="btn">Create Account</button>
+    </form>
+    <p id="registerMsg" class="msg"></p>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    // registration handled by app.js helper - registerFormId = registerForm
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = {
+        fullName: document.getElementById('fullName').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        business: document.getElementById('business').value,
+        password: document.getElementById('password').value
+      };
+      const msgEl = document.getElementById('registerMsg');
+      msgEl.textContent = 'Registering...';
+      try {
+        await registerUser(data); // function from app.js
+        msgEl.textContent = 'Account created. Check email for verification.';
+      } catch (err) {
+        msgEl.textContent = 'Error: ' + err.message;
+      }
+    });
+  </script>
+</body>
+</html>

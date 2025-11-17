@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login — Sell-It UG</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header container">
+    <div class="logo">Sell-It UG</div>
+    <nav><a href="index.html">Home</a> <a href="register.html">Register</a></nav>
+  </header>
+
+  <main class="container form-card">
+    <h1>Login</h1>
+    <form id="loginForm">
+      <label>Email<input id="loginEmail" type="email" required/></label>
+      <label>Password<input id="loginPassword" type="password" required/></label>
+      <button type="submit" class="btn">Login</button>
+    </form>
+    <p id="loginMsg" class="msg"></p>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const msgEl = document.getElementById('loginMsg');
+      msgEl.textContent = 'Logging in...';
+      try {
+        await loginUser(email, password); // app.js helper
+        // after login, redirect to post product page or dashboard:
+        window.location.href = 'post-product.html';
+      } catch (err) {
+        msgEl.textContent = 'Error: ' + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
