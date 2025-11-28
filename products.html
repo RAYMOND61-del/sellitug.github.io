@@ -2,14 +2,28 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Products — Sell-It UG</title>
   <link rel="stylesheet" href="style.css">
+
+  <!-- Firebase Compat SDKs (Required for GitHub Pages) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
 </head>
+
 <body>
   <header class="header container">
     <div class="logo">Sell-It UG</div>
-    <nav><a href="index.html">Home</a> <a href="post-product.html">Post Product</a> <a href="login.html">Login</a></nav>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="products.html">Products</a>
+      <a href="post-product.html" id="nav-post">Post Product</a>
+      <a href="login.html" id="nav-login">Login</a>
+      <a href="register.html" id="nav-register">Register</a>
+      <a href="#" id="nav-logout" style="display:none">Logout</a>
+    </nav>
   </header>
 
   <main class="container">
@@ -19,36 +33,50 @@
   </main>
 
   <script src="app.js"></script>
+
   <script>
-    // load products on page ready
-    window.addEventListener('load', async () => {
-      const msgEl = document.getElementById('productsMsg');
-      msgEl.textContent = 'Loading products...';
+    /* ---------------- LOAD PRODUCTS ---------------- */
+    window.addEventListener("load", async () => {
+      const msgEl = document.getElementById("productsMsg");
+      msgEl.textContent = "Loading products...";
+
       try {
-        const products = await fetchProducts(); // app.js helper
-        msgEl.textContent = '';
-        const grid = document.getElementById('productsGrid');
+        const products = await fetchProducts();
+
+        msgEl.textContent = "";
+        const grid = document.getElementById("productsGrid");
+
         if (!products.length) {
-          grid.innerHTML = '<p>No products yet. Be the first to post!</p>';
+          grid.innerHTML = "<p>No products yet. Be the first to post!</p>";
           return;
         }
-        grid.innerHTML = products.map(p => `
+
+        grid.innerHTML = products
+          .map(
+            (p) => `
           <div class="product-card">
-            <img src="${p.imageUrl || 'placeholder.png'}" alt="${escapeHtml(p.title)}" />
+            <img src="${p.imageUrl || "placeholder.png"}" alt="${escapeHtml(
+              p.title
+            )}" />
             <h3>${escapeHtml(p.title)}</h3>
             <p class="price">UGX ${Number(p.price).toLocaleString()}</p>
             <p>${escapeHtml(p.description)}</p>
-            <p class="meta">Seller: ${escapeHtml(p.sellerName || 'Unknown')}</p>
+            <p class="meta">Seller: ${escapeHtml(p.sellerName || "Unknown")}</p>
           </div>
-        `).join('');
+        `
+          )
+          .join("");
       } catch (err) {
-        msgEl.textContent = 'Error loading products: ' + err.message;
+        msgEl.textContent = "Error loading products: " + err.message;
       }
     });
 
-    // small helper for escaping
-    function escapeHtml(s = '') {
-      return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
+    /* ---------------- Escape helper ---------------- */
+    function escapeHtml(s = "") {
+      return s
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
     }
   </script>
 </body>
