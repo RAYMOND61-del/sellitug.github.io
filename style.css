@@ -1,20 +1,178 @@
-:root{
-  --primary:#2563eb; --dark:#111827; --muted:#6b7280;
+:root {
+  --primary: #2563eb;
+  --dark: #111827;
+  --muted: #6b7280;
+  --bg: #f8fafc;
+  --white: #ffffff;
 }
-body{font-family:Segoe UI, Tahoma, Geneva, Verdana, sans-serif;margin:0;background:#f8fafc;color:var(--dark)}
-.container{width:92%;max-width:1100px;margin:0 auto;padding:20px}
-.header{display:flex;justify-content:space-between;align-items:center;padding:12px 0}
-.header nav a{margin-left:14px;color:var(--dark);text-decoration:none}
-.logo{font-weight:700;color:var(--primary)}
-.hero{background:linear-gradient(90deg,var(--primary),#1d4ed8);color:white;padding:40px;border-radius:8px;margin-bottom:20px}
-.cta .btn{margin-right:10px}
-.btn{display:inline-block;padding:10px 14px;border-radius:8px;background:var(--primary);color:#fff;text-decoration:none}
-.btn-outline{background:transparent;border:2px solid var(--primary);color:var(--primary)}
-.form-card{background:white;padding:20px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.08);margin-top:20px}
-.form-card label{display:block;margin-bottom:12px}
-.form-card input,.form-card textarea,.form-card select{width:100%;padding:10px;border:1px solid #e5e7eb;border-radius:6px}
-.msg{color:var(--muted);margin-top:10px}
-.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin-top:20px}
-.product-card{background:#fff;padding:12px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.06);text-align:left}
-.product-card img{width:100%;height:160px;object-fit:cover;border-radius:6px}
-.price{font-weight:700;color:var(--primary);margin-top:6px}
+
+/* GLOBAL */
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  background: var(--bg);
+  color: var(--dark);
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  width: 92%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* HEADER */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+}
+
+.logo {
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 1.3rem;
+}
+
+.header nav a {
+  margin-left: 14px;
+  color: var(--dark);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.header nav a:hover {
+  color: var(--primary);
+}
+
+/* HERO SECTION */
+.hero {
+  background: linear-gradient(90deg, var(--primary), #1d4ed8);
+  color: white;
+  padding: 50px 40px;
+  border-radius: 10px;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.hero h1 {
+  margin: 0 0 10px;
+}
+
+.cta .btn {
+  margin-right: 12px;
+}
+
+/* BUTTONS */
+.btn {
+  display: inline-block;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: var(--primary);
+  color: var(--white);
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.btn:hover {
+  background: #1d4ed8;
+  transform: translateY(-2px);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--primary);
+  color: var(--primary);
+}
+
+.btn-outline:hover {
+  background: var(--primary);
+  color: white;
+}
+
+/* FORM CARD */
+.form-card {
+  background: white;
+  padding: 22px;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  margin-top: 25px;
+}
+
+.form-card label {
+  display: block;
+  margin-bottom: 14px;
+  font-weight: 500;
+}
+
+.form-card input,
+.form-card textarea,
+.form-card select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 1rem;
+  margin-top: 4px;
+}
+
+/* MESSAGE TEXTS */
+.msg {
+  color: var(--muted);
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+
+/* PRODUCT GRID */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 18px;
+  margin-top: 22px;
+}
+
+/* PRODUCT CARD */
+.product-card {
+  background: #fff;
+  padding: 14px;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  text-align: left;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
+}
+
+.product-card img {
+  width: 100%;
+  height: 170px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.price {
+  font-weight: 700;
+  color: var(--primary);
+  margin-top: 8px;
+}
+
+/* MOBILE FIXES */
+@media (max-width: 600px) {
+  .hero {
+    padding: 35px 20px;
+    text-align: left;
+  }
+  .header nav a {
+    margin-left: 10px;
+  }
+  .product-card img {
+    height: 150px;
+  }
+}
