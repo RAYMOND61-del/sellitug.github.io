@@ -2,10 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Sell-It UG</title>
   <link rel="stylesheet" href="style.css">
+
+  <!-- Firebase Compat SDKs (REQUIRED for GitHub Pages) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
 </head>
+
 <body>
   <header class="header container">
     <div class="logo">Sell-It UG</div>
@@ -43,6 +50,7 @@
     <p>&copy; 2025 Sell-It UG — Founded by Kawooya Raymond</p>
   </footer>
 
+  <!-- Main Firebase logic -->
   <script src="app.js"></script>
 </body>
 </html>
