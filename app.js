@@ -37,12 +37,13 @@ function waitForFirebase() {
 /*   IMPORTANT: REPLACE THESE VALUES with the real ones you were given. */
 
 const firebaseConfig = {
-  apiKey: "REPLACE_ME",
-  authDomain: "REPLACE_ME.firebaseapp.com",
-  projectId: "REPLACE_ME",
-  storageBucket: "REPLACE_ME.appspot.com",
-  messagingSenderId: "REPLACE_ME",
-  appId: "REPLACE_ME"
+  apiKey: "AIzaSyDigrm5eY5PQ6yePx4Zm9fWbhPea8_7HRw",
+  authDomain: "sell-it-ug.firebaseapp.com",
+  projectId: "sell-it-ug",
+  storageBucket: "sell-it-ug.firebasestorage.app",
+  messagingSenderId: "67534957806",
+  appId: "1:67534957806:web:bfc2c8c7e78002ebb3d7ff",
+  measurementId: "G-4786GRZDY0"
 };
 
 let auth, db, storage;
