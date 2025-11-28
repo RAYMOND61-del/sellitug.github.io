@@ -43,24 +43,27 @@
   <script src="app.js"></script>
 
   <script>
-    document.getElementById('registerForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const data = {
-        fullName: document.getElementById('fullName').value.trim(),
-        email: document.getElementById('email').value.trim(),
-        phone: document.getElementById('phone').value.trim(),
-        business: document.getElementById('business').value,
-        password: document.getElementById('password').value
-      };
-      const msgEl = document.getElementById('registerMsg');
-      msgEl.textContent = 'Registering...';
-      try {
-        await registerUser(data); // works now!
-        msgEl.textContent = 'Account created. Check your email to verify.';
-      } catch (err) {
-        msgEl.textContent = 'Error: ' + err.message;
-      }
-    });
+    // Wait for app.js to fully initialize before setting up the form
+    setTimeout(() => {
+      document.getElementById('registerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const data = {
+          fullName: document.getElementById('fullName').value.trim(),
+          email: document.getElementById('email').value.trim(),
+          phone: document.getElementById('phone').value.trim(),
+          business: document.getElementById('business').value,
+          password: document.getElementById('password').value
+        };
+        const msgEl = document.getElementById('registerMsg');
+        msgEl.textContent = 'Registering...';
+        try {
+          await registerUser(data);
+          msgEl.textContent = 'Account created. Check your email to verify.';
+        } catch (err) {
+          msgEl.textContent = 'Error: ' + err.message;
+        }
+      });
+    }, 1000); // 1 second delay to ensure app.js is loaded
   </script>
 </body>
 </html>
