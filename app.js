@@ -1,145 +1,147 @@
-/* app.js - Firebase helpers for Sell-It UG
-   Uses compat SDKs loaded via CDN so this file can run on static hosting.
-   NOTE: before using, put these two <script> tags in each HTML head OR include them here:
-   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+/* app.js – SellItUG Firebase Setup (FINAL WORKING VERSION)
+   Uses Firebase v9 COMPAT so it works perfectly on GitHub Pages.
 */
 
-if (typeof window !== 'undefined') {
-  // make sure compat libs are loaded; if not, we load them dynamically
-  (function ensureFirebaseCompat() {
-    const needed = [
-      'https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js',
-      'https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js',
-      'https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js',
-      'https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js'
-    ];
-    needed.forEach(src => {
-      if (![...document.scripts].some(s => s.src && s.src.includes(src.split('/').pop()))) {
-        const s = document.createElement('script'); s.src = src; s.async = false; document.head.appendChild(s);
-      }
-    });
-  })();
-}
+/* ---------------------- Load Firebase Compat SDKs ---------------------- */
+(function loadFirebase() {
+  const sources = [
+    "https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js",
+    "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js",
+    "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js",
+    "https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"
+  ];
 
-// Wait until firebase is available (simple helper)
+  sources.forEach(src => {
+    const exists = [...document.scripts].some(s => s.src.includes(src));
+    if (!exists) {
+      const script = document.createElement("script");
+      script.src = src;
+      script.async = false;
+      document.head.appendChild(script);
+    }
+  });
+})();
+
+/* ---------------------- WAIT FOR FIREBASE TO LOAD ---------------------- */
 function waitForFirebase() {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const check = () => {
-      if (window.firebase && firebase.apps !== undefined) return resolve();
+      if (window.firebase && firebase.initializeApp) return resolve();
       setTimeout(check, 50);
     };
     check();
   });
 }
 
-// Firebase config: REPLACE with your project's config
+/* ---------------------- YOUR FIREBASE CONFIG ---------------------- */
+/*   IMPORTANT: REPLACE THESE VALUES with the real ones you were given. */
+
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "REPLACE_ME",
+  authDomain: "REPLACE_ME.firebaseapp.com",
+  projectId: "REPLACE_ME",
+  storageBucket: "REPLACE_ME.appspot.com",
+  messagingSenderId: "REPLACE_ME",
+  appId: "REPLACE_ME"
 };
 
 let auth, db, storage;
 
-// initialize after compat libs load
+/* ---------------------- INITIALIZE FIREBASE ---------------------- */
 (async function initFirebase() {
   await waitForFirebase();
+
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
   }
+
   auth = firebase.auth();
   db = firebase.firestore();
   storage = firebase.storage();
 
-  // update nav UI on auth state
+  /* ---------- NAVBAR AUTH STATE UI ---------- */
   auth.onAuthStateChanged(user => {
-    const loginLink = document.getElementById('nav-login');
-    const registerLink = document.getElementById('nav-register');
-    const logoutLink = document.getElementById('nav-logout');
-    const navPost = document.getElementById('nav-post');
+    const login = document.getElementById('nav-login');
+    const register = document.getElementById('nav-register');
+    const logout = document.getElementById('nav-logout');
+    const post = document.getElementById('nav-post');
+
     if (user) {
-      if (loginLink) loginLink.style.display = 'none';
-      if (registerLink) registerLink.style.display = 'none';
-      if (logoutLink) logoutLink.style.display = 'inline';
-      if (navPost) navPost.style.display = 'inline';
+      if (login) login.style.display = 'none';
+      if (register) register.style.display = 'none';
+      if (logout) logout.style.display = 'inline';
+      if (post) post.style.display = 'inline';
     } else {
-      if (loginLink) loginLink.style.display = 'inline';
-      if (registerLink) registerLink.style.display = 'inline';
-      if (logoutLink) logoutLink.style.display = 'none';
-      if (navPost) navPost.style.display = 'inline';
+      if (login) login.style.display = 'inline';
+      if (register) register.style.display = 'inline';
+      if (logout) logout.style.display = 'none';
+      if (post) post.style.display = 'inline';
     }
   });
 })();
 
-// helper to ensure auth is ready and return currentUser
-function onAuthReady(callback) {
-  const unsub = auth.onAuthStateChanged(user => {
-    unsub();
-    callback(user);
-  });
-}
-
-// ----------------- Auth helpers -----------------
+/* ---------------------- AUTH HELPERS ---------------------- */
 async function registerUser({ fullName, email, phone, business, password }) {
-  if (!auth) throw new Error('Auth not initialized yet');
-  const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-  const user = userCredential.user;
-  // add displayName
-  await user.updateProfile({ displayName: fullName || '' });
-  // send verification
+  const cred = await auth.createUserWithEmailAndPassword(email, password);
+  const user = cred.user;
+
+  await user.updateProfile({ displayName: fullName || "" });
   await user.sendEmailVerification();
-  // store profile in Firestore
-  await db.collection('users').doc(user.uid).set({
-    fullName, email, phone, business, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+
+  await db.collection("users").doc(user.uid).set({
+    fullName,
+    email,
+    phone,
+    business,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
   });
+
   return user;
 }
 
 async function loginUser(email, password) {
-  if (!auth) throw new Error('Auth not initialized yet');
-  const userCredential = await auth.signInWithEmailAndPassword(email, password);
-  if (!userCredential.user.emailVerified) {
-    // Optionally sign out immediately to prevent unverified access
+  const cred = await auth.signInWithEmailAndPassword(email, password);
+  const user = cred.user;
+
+  if (!user.emailVerified) {
     await auth.signOut();
-    throw new Error('Please verify your email before logging in.');
+    throw new Error("Please verify your email before logging in.");
   }
-  return userCredential.user;
+
+  return user;
 }
 
-async function logoutUser() {
-  if (!auth) throw new Error('Auth not initialized yet');
+function logoutUser() {
   return auth.signOut();
 }
 
-// ----------------- Product helpers -----------------
+/* ---------------------- PRODUCT SYSTEM ---------------------- */
 async function postProduct({ title, description, price, category, imgFile }) {
-  if (!auth || !db || !storage) throw new Error('Firebase not ready');
   const user = auth.currentUser;
-  if (!user) throw new Error('Not authenticated');
-  if (!user.emailVerified) throw new Error('Please verify email before posting');
+  if (!user) throw new Error("Please log in first.");
 
-  // prepare product doc
-  const docRef = db.collection('products').doc();
-  const productId = docRef.id;
-  let imageUrl = '';
+  if (!user.emailVerified) {
+    throw new Error("Please verify your email before posting.");
+  }
+
+  const docRef = db.collection("products").doc();
+  let imageUrl = "";
 
   if (imgFile) {
-    const ext = imgFile.name.split('.').pop();
-    const storageRef = storage.ref().child(`products/${productId}.${ext}`);
-    const snap = await storageRef.put(imgFile);
+    const ext = imgFile.name.split(".").pop();
+    const fileRef = storage.ref(products/${docRef.id}.${ext});
+    const snap = await fileRef.put(imgFile);
     imageUrl = await snap.ref.getDownloadURL();
   }
 
   const product = {
-    title, description, price: Number(price) || 0, category, imageUrl,
+    title,
+    description,
+    price: Number(price),
+    category,
+    imageUrl,
     sellerUid: user.uid,
-    sellerName: user.displayName || '',
+    sellerName: user.displayName || "",
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
   };
 
@@ -147,26 +149,28 @@ async function postProduct({ title, description, price, category, imgFile }) {
   return product;
 }
 
-async function fetchProducts(limit = 100) {
-  if (!db) throw new Error('Firestore not ready');
-  const snap = await db.collection('products').orderBy('createdAt','desc').limit(limit).get();
-  const arr = [];
-  snap.forEach(doc => arr.push({ id: doc.id, ...doc.data() }));
-  return arr;
+async function fetchProducts(limit = 50) {
+  const snap = await db.collection("products")
+    .orderBy("createdAt", "desc")
+    .limit(limit)
+    .get();
+
+  const list = [];
+  snap.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
+  return list;
 }
 
-// small export for templates that call helpers
+/* ---------------------- EXPORT TO HTML ---------------------- */
 window.registerUser = registerUser;
 window.loginUser = loginUser;
 window.logoutUser = logoutUser;
 window.postProduct = postProduct;
 window.fetchProducts = fetchProducts;
-window.onAuthReady = onAuthReady;
 
-// utility: redirect to login when clicking nav login/out
-document.addEventListener('click', (e) => {
-  if (e.target && e.target.id === 'nav-logout') {
+/* ---------------------- NAV LOGOUT CLICK ---------------------- */
+document.addEventListener("click", e => {
+  if (e.target.id === "nav-logout") {
     e.preventDefault();
-    logoutUser().then(() => location.href = 'index.html');
+    logoutUser().then(() => (location.href = "index.html"));
   }
 });
