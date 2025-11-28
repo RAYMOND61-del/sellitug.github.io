@@ -33,9 +33,16 @@
     <p id="registerMsg" class="msg"></p>
   </main>
 
-  <script src="app.js"></script>
+  <!-- Firebase compat SDKs (MUST come before app.js) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+
+  <!-- Your app logic -->
+  <script src="app.js" defer></script>
+
   <script>
-    // registration handled by app.js helper - registerFormId = registerForm
     document.getElementById('registerForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const data = {
@@ -48,8 +55,8 @@
       const msgEl = document.getElementById('registerMsg');
       msgEl.textContent = 'Registering...';
       try {
-        await registerUser(data); // function from app.js
-        msgEl.textContent = 'Account created. Check email for verification.';
+        await registerUser(data); // works now!
+        msgEl.textContent = 'Account created. Check your email to verify.';
       } catch (err) {
         msgEl.textContent = 'Error: ' + err.message;
       }
