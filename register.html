@@ -33,7 +33,7 @@
     <p id="registerMsg" class="msg"></p>
   </main>
 
-  <!-- Firebase compat SDKs (MUST come before app.js) -->
+  <!-- Firebase compat SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
@@ -43,8 +43,24 @@
   <script src="app.js"></script>
 
   <script>
-    // Wait for app.js to fully initialize before setting up the form
-    setTimeout(() => {
+    // More robust waiting mechanism
+    let attempts = 0;
+    const maxAttempts = 30; // 3 seconds max
+    
+    function waitForRegisterUser() {
+      if (typeof registerUser !== 'undefined') {
+        console.log(" registerUser found after " + attempts + " attempts");
+        setupFormHandler();
+      } else if (attempts < maxAttempts) {
+        attempts++;
+        setTimeout(waitForRegisterUser, 100);
+      } else {
+        console.error(" registerUser not found after " + maxAttempts + " attempts");
+        document.getElementById('registerMsg').textContent = 'System not ready. Please refresh the page.';
+      }
+    }
+    
+    function setupFormHandler() {
       document.getElementById('registerForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const data = {
@@ -63,7 +79,12 @@
           msgEl.textContent = 'Error: ' + err.message;
         }
       });
-    }, 1000); // 1 second delay to ensure app.js is loaded
+      console.log(" Form handler setup complete");
+    }
+    
+    // Start waiting for registerUser to be available
+    console.log(" Waiting for registerUser to be available...");
+    waitForRegisterUser();
   </script>
 </body>
 </html>
