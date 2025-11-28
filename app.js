@@ -125,5 +125,14 @@ async function postProduct({ title, description, price, category, imgFile }) {
 document.addEventListener("click", e => {
   if (e.target.id === "nav-logout") {
     logoutUser().then(() => (location.href = "index.html"));
+
+    // Debug: Check if functions are available
+console.log(" app.js loaded");
+console.log("registerUser available:", typeof registerUser !== 'undefined');
+console.log("window.registerUser available:", typeof window.registerUser !== 'undefined');
+
+// Make absolutely sure registerUser is available globally
+window.registerUser = registerUser;
+console.log(" registerUser now forcefully set on window");
   }
 });
