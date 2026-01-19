@@ -1,10 +1,18 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sell-It UG</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sell-It UG - Uganda's trusted digital marketplace. Sell and buy products online. Free first year, pay only on sales. Trusted by thousands of Ugandans.">
+  <meta name="keywords" content="marketplace Uganda, sell online Uganda, buy sell Uganda, digital market, Jiji alternative">
+  <meta name="author" content="Kawooya Raymond">
+  <meta property="og:title" content="Sell-It UG - Uganda's Digital Marketplace">
+  <meta property="og:description" content="Start selling to Ugandans today - Free first year, pay only on sales">
+  <meta property="og:image" content="https://raymond61-del.github.io/sellitug.github.io/logo.png">
+  
+  <title>Sell-It UG - Uganda's Trusted Digital Marketplace | Sell & Buy Online</title>
+  <link rel="stylesheet" href="style-improved.css">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
 
   <!-- Firebase Compat SDKs (REQUIRED for GitHub Pages) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -14,43 +22,438 @@
 </head>
 
 <body>
-  <header class="header container">
-    <div class="logo">Sell-It UG</div>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="products.html">Products</a>
-      <a href="post-product.html" id="nav-post">Post Product</a>
-      <a href="login.html" id="nav-login">Login</a>
-      <a href="register.html" id="nav-register">Register</a>
-      <a href="#" id="nav-logout" style="display:none">Logout</a>
-    </nav>
+  <!-- ==================== HEADER / NAVIGATION ==================== -->
+  <header class="header">
+    <div class="container">
+      <div class="nav-wrapper">
+        <div class="logo">
+          <span class="logo-icon">🛍️</span>
+          <span class="logo-text">Sell-It UG</span>
+        </div>
+
+        <nav class="nav-menu" id="navMenu">
+          <a href="index.html" class="nav-link active">Home</a>
+          <a href="products.html" class="nav-link">Browse</a>
+          <a href="#categories" class="nav-link">Categories</a>
+          <a href="#how-it-works" class="nav-link">How It Works</a>
+        </nav>
+
+        <div class="nav-actions">
+          <div class="search-bar-mobile">
+            <input type="text" placeholder="Search products..." id="mobileSearch" class="search-input-mobile">
+          </div>
+          <a href="login.html" id="nav-login" class="btn btn-sm btn-outline">Login</a>
+          <a href="register.html" id="nav-register" class="btn btn-sm">Join Free</a>
+          <a href="#" id="nav-logout" class="btn btn-sm btn-danger" style="display:none">Logout</a>
+          <button class="menu-toggle" id="menuToggle">☰</button>
+        </div>
+      </div>
+    </div>
   </header>
 
-  <main class="container">
-    <section class="hero">
-      <h1>Sell-It UG — Uganda's Digital Marketplace</h1>
-      <p>Start selling to Ugandans — free first year</p>
-      <div class="cta">
-        <a class="btn" href="register.html">Create Account</a>
-        <a class="btn btn-outline" href="products.html">Browse Products</a>
+  <!-- ==================== HERO SECTION ==================== -->
+  <section class="hero">
+    <div class="container hero-content">
+      <div class="hero-text">
+        <h1 class="hero-title">Start Selling to Ugandans Today</h1>
+        <p class="hero-subtitle">Join Uganda's fastest-growing digital marketplace. Free to start, pay only on sales.</p>
+        
+        <div class="hero-search">
+          <input type="text" placeholder="What are you looking for?" id="heroSearch" class="search-input">
+          <button class="btn btn-primary btn-search">Search</button>
+        </div>
+
+        <div class="hero-cta">
+          <a href="register.html" class="btn btn-large btn-primary">Start Selling Now</a>
+          <a href="products.html" class="btn btn-large btn-outline">Browse Products</a>
+        </div>
+
+        <div class="hero-stats">
+          <div class="stat">
+            <span class="stat-number">5,000+</span>
+            <span class="stat-label">Active Sellers</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number">50,000+</span>
+            <span class="stat-label">Products Listed</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number">100,000+</span>
+            <span class="stat-label">Monthly Visitors</span>
+          </div>
+        </div>
       </div>
-    </section>
 
-    <section class="features">
-      <h2>Why Sell-It UG?</h2>
-      <ul>
-        <li>Easy registration & verification</li>
-        <li>Post products with images</li>
-        <li>Free to start — pay on sale</li>
-      </ul>
-    </section>
-  </main>
+      <div class="hero-image">
+        <div class="hero-visual">
+          <div class="phone-mockup">
+            <div class="phone-screen">
+              <div class="app-header">Sell-It UG</div>
+              <div class="app-product">📱 Latest Products</div>
+              <div class="app-product">👜 Fashion Items</div>
+              <div class="app-product">🏠 Home & Living</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <footer class="footer container">
-    <p>&copy; 2025 Sell-It UG — Founded by Kawooya Raymond</p>
+  <!-- ==================== TRUST BADGES ==================== -->
+  <section class="trust-section">
+    <div class="container">
+      <div class="trust-grid">
+        <div class="trust-item">
+          <span class="trust-icon">🔒</span>
+          <h3>100% Secure</h3>
+          <p>Your data is protected with industry-leading encryption</p>
+        </div>
+        <div class="trust-item">
+          <span class="trust-icon">✓</span>
+          <h3>Verified Sellers</h3>
+          <p>All sellers are verified for your peace of mind</p>
+        </div>
+        <div class="trust-item">
+          <span class="trust-icon">💰</span>
+          <h3>Zero Upfront Cost</h3>
+          <p>Free first year. Pay commission only when you sell</p>
+        </div>
+        <div class="trust-item">
+          <span class="trust-icon">📞</span>
+          <h3>24/7 Support</h3>
+          <p>Live chat support to help with your questions</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== HOW IT WORKS ==================== -->
+  <section class="how-it-works" id="how-it-works">
+    <div class="container">
+      <h2 class="section-title">How It Works</h2>
+      
+      <div class="steps-container">
+        <div class="step">
+          <div class="step-number">1</div>
+          <h3>Create Account</h3>
+          <p>Sign up in 2 minutes with your email and phone number</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <h3>Verify Email</h3>
+          <p>Confirm your email address to unlock selling features</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <h3>Post Products</h3>
+          <p>Add photos, descriptions, and set your prices</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step">
+          <div class="step-number">4</div>
+          <h3>Get Sales</h3>
+          <p>Start earning when buyers purchase your products</p>
+        </div>
+      </div>
+
+      <a href="register.html" class="btn btn-primary btn-large">Get Started Free</a>
+    </div>
+  </section>
+
+  <!-- ==================== CATEGORIES ==================== -->
+  <section class="categories" id="categories">
+    <div class="container">
+      <h2 class="section-title">Browse by Category</h2>
+      
+      <div class="categories-grid">
+        <div class="category-card">
+          <div class="category-icon">👕</div>
+          <h3>Fashion & Clothing</h3>
+          <p class="category-count">8,500+ items</p>
+          <a href="products.html?category=fashion" class="category-link">Browse →</a>
+        </div>
+
+        <div class="category-card">
+          <div class="category-icon">📱</div>
+          <h3>Electronics</h3>
+          <p class="category-count">3,200+ items</p>
+          <a href="products.html?category=electronics" class="category-link">Browse →</a>
+        </div>
+
+        <div class="category-card">
+          <div class="category-icon">🏠</div>
+          <h3>Home & Living</h3>
+          <p class="category-count">5,800+ items</p>
+          <a href="products.html?category=home" class="category-link">Browse →</a>
+        </div>
+
+        <div class="category-card">
+          <div class="category-icon">🚗</div>
+          <h3>Vehicles</h3>
+          <p class="category-count">1,200+ items</p>
+          <a href="products.html?category=vehicles" class="category-link">Browse →</a>
+        </div>
+
+        <div class="category-card">
+          <div class="category-icon">💼</div>
+          <h3>Business & Services</h3>
+          <p class="category-count">2,100+ items</p>
+          <a href="products.html?category=business" class="category-link">Browse →</a>
+        </div>
+
+        <div class="category-card">
+          <div class="category-icon">🎮</div>
+          <h3>Games & Entertainment</h3>
+          <p class="category-count">3,500+ items</p>
+          <a href="products.html?category=entertainment" class="category-link">Browse →</a>
+        </div>
+
+        <div class="category-card">
+          <div class="category-icon">📚</div>
+          <h3>Books & Education</h3>
+          <p class="category-count">2,300+ items</p>
+          <a href="products.html?category=education" class="category-link">Browse →</a>
+        </div>
+
+        <div class="category-card">
+          <div class="category-icon">✨</div>
+          <h3>Beauty & Personal Care</h3>
+          <p class="category-count">4,100+ items</p>
+          <a href="products.html?category=beauty" class="category-link">Browse →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FEATURES SECTION ==================== -->
+  <section class="features">
+    <div class="container">
+      <h2 class="section-title">Why Choose Sell-It UG?</h2>
+      
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>Lightning Fast</h3>
+          <p>Optimized for Uganda's internet speeds. Fast loading, minimal data usage.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🌍</div>
+          <h3>Nationwide Reach</h3>
+          <p>Connect with buyers and sellers across all of Uganda in one place.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">⭐</div>
+          <h3>Seller Ratings</h3>
+          <p>Build your reputation with authentic buyer reviews and ratings.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📸</div>
+          <h3>Image Support</h3>
+          <p>Upload high-quality photos to showcase your products effectively.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔍</div>
+          <h3>Advanced Search</h3>
+          <p>Filter by category, price, condition, and seller rating.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">💬</div>
+          <h3>Direct Messaging</h3>
+          <p>Communicate directly with buyers and negotiate prices safely.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🏆</div>
+          <h3>Top Seller Program</h3>
+          <p>Premium sellers get featured listings and priority support.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📱</div>
+          <h3>Mobile Friendly</h3>
+          <p>Works perfectly on all devices - phones, tablets, and computers.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== TESTIMONIALS ==================== -->
+  <section class="testimonials">
+    <div class="container">
+      <h2 class="section-title">What Our Sellers Say</h2>
+      
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+          <p class="testimonial-text">"Sell-It UG has been amazing for my small business. I've sold over 500 items in just 6 months. The platform is reliable and easy to use!"</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">👨</div>
+            <div class="author-info">
+              <p class="author-name">John Mutebi</p>
+              <p class="author-role">Fashion Seller, Kampala</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+          <p class="testimonial-text">"Free first year was the best deal! No upfront costs means I could start my business immediately. Highly recommended!"</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">👩</div>
+            <div class="author-info">
+              <p class="author-name">Peace Nakiyemba</p>
+              <p class="author-role">Electronics Seller, Kampala</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+          <p class="testimonial-text">"The buyer verification system makes me feel safe. I know I'm dealing with real people. Great platform!"</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">👨</div>
+            <div class="author-info">
+              <p class="author-name">David Ochieng</p>
+              <p class="author-role">Home Goods Seller, Jinja</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== CTA SECTION ==================== -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-content">
+        <h2>Ready to Start Selling?</h2>
+        <p>Join thousands of successful sellers in Uganda. No hidden fees, no complicated process.</p>
+        <div class="cta-buttons">
+          <a href="register.html" class="btn btn-large btn-white">Create Free Account</a>
+          <a href="products.html" class="btn btn-large btn-outline">Browse Products</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-section">
+          <h4>About</h4>
+          <ul>
+            <li><a href="#about">About Sell-It UG</a></li>
+            <li><a href="#blog">Blog</a></li>
+            <li><a href="#careers">Careers</a></li>
+            <li><a href="#press">Press</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4>Support</h4>
+          <ul>
+            <li><a href="#help">Help Center</a></li>
+            <li><a href="#contact">Contact Us</a></li>
+            <li><a href="#safety">Safety Tips</a></li>
+            <li><a href="#faq">FAQ</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4>Policies</h4>
+          <ul>
+            <li><a href="#privacy">Privacy Policy</a></li>
+            <li><a href="#terms">Terms of Service</a></li>
+            <li><a href="#guidelines">Community Guidelines</a></li>
+            <li><a href="#cookies">Cookie Policy</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="https://facebook.com/sellitug" target="_blank">Facebook</a></li>
+            <li><a href="https://twitter.com/sellitug" target="_blank">Twitter</a></li>
+            <li><a href="https://instagram.com/sellitug" target="_blank">Instagram</a></li>
+            <li><a href="https://whatsapp.com/channel/sellitug" target="_blank">WhatsApp</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2025 Sell-It UG. All rights reserved. Founded by Kawooya Raymond</p>
+        <div class="footer-badges">
+          <span class="badge">🔒 Secure</span>
+          <span class="badge">✓ Verified</span>
+          <span class="badge">⭐ Trusted</span>
+        </div>
+      </div>
+    </div>
   </footer>
 
-  <!-- Main Firebase logic -->
-  <script src="app.js"></script>
+  <!-- ==================== SCRIPTS ==================== -->
+  <script src="app-improved.js"></script>
+  <script>
+    // Mobile menu toggle
+    const menuToggle = document.getElementById('menuToggle');
+    const navMenu = document.getElementById('navMenu');
+    
+    if (menuToggle) {
+      menuToggle.addEventListener('click', () => {
+        navMenu.classList.toggle('active');
+      });
+    }
+
+    // Search functionality
+    const heroSearch = document.getElementById('heroSearch');
+    const searchButton = document.querySelector('.btn-search');
+    
+    if (searchButton && heroSearch) {
+      searchButton.addEventListener('click', () => {
+        const query = heroSearch.value.trim();
+        if (query) {
+          window.location.href = `products.html?search=${encodeURIComponent(query)}`;
+        }
+      });
+
+      heroSearch.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          const query = heroSearch.value.trim();
+          if (query) {
+            window.location.href = `products.html?search=${encodeURIComponent(query)}`;
+          }
+        }
+      });
+    }
+
+    // Update nav state based on auth
+    function updateNavState() {
+      const user = firebase && firebase.auth && firebase.auth().currentUser;
+      const navLogin = document.getElementById('nav-login');
+      const navRegister = document.getElementById('nav-register');
+      const navLogout = document.getElementById('nav-logout');
+
+      if (user) {
+        if (navLogin) navLogin.style.display = 'none';
+        if (navRegister) navRegister.style.display = 'none';
+        if (navLogout) navLogout.style.display = 'inline-block';
+      }
+    }
+
+    // Listen for auth changes
+    if (firebase && firebase.auth) {
+      firebase.auth().onAuthStateChanged(() => {
+        updateNavState();
+      });
+    }
+  </script>
 </body>
 </html>
