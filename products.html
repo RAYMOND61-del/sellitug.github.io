@@ -1,12 +1,16 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Products — Sell-It UG</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Browse products on Sell-It UG - Uganda's trusted digital marketplace. Thousands of items from verified sellers.">
+  <meta name="keywords" content="buy online Uganda, marketplace products, shopping Uganda, classified ads Uganda">
+  
+  <title>Products - Sell-It UG | Browse Uganda's Digital Marketplace</title>
+  <link rel="stylesheet" href="style-improved.css">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
 
-  <!-- Firebase Compat SDKs (Required for GitHub Pages) -->
+  <!-- Firebase Compat SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
@@ -14,69 +18,751 @@
 </head>
 
 <body>
-  <header class="header container">
-    <div class="logo">Sell-It UG</div>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="products.html">Products</a>
-      <a href="post-product.html" id="nav-post">Post Product</a>
-      <a href="login.html" id="nav-login">Login</a>
-      <a href="register.html" id="nav-register">Register</a>
-      <a href="#" id="nav-logout" style="display:none">Logout</a>
-    </nav>
+  <!-- ==================== HEADER ==================== -->
+  <header class="header">
+    <div class="container">
+      <div class="nav-wrapper">
+        <div class="logo">
+          <span class="logo-icon">🛍️</span>
+          <span class="logo-text">Sell-It UG</span>
+        </div>
+
+        <nav class="nav-menu" id="navMenu">
+          <a href="index.html" class="nav-link">Home</a>
+          <a href="products.html" class="nav-link active">Browse</a>
+        </nav>
+
+        <div class="nav-actions">
+          <a href="post-product.html" id="nav-post-product" class="btn btn-sm btn-primary" style="display:none">
+            + Post Product
+          </a>
+          <a href="login.html" id="nav-login" class="btn btn-sm btn-outline">Login</a>
+          <a href="register.html" id="nav-register" class="btn btn-sm">Join Free</a>
+          <a href="#" id="nav-logout" class="btn btn-sm btn-danger" style="display:none">Logout</a>
+          <button class="menu-toggle" id="menuToggle">☰</button>
+        </div>
+      </div>
+    </div>
   </header>
 
-  <main class="container">
-    <h1>Products</h1>
-    <div id="productsGrid" class="products-grid"></div>
-    <p id="productsMsg" class="msg"></p>
-  </main>
+  <!-- ==================== PAGE HEADER ==================== -->
+  <section class="page-header">
+    <div class="container">
+      <h1>Browse Products</h1>
+      <p>Discover thousands of items from trusted sellers across Uganda</p>
+    </div>
+  </section>
 
-  <script src="app.js"></script>
+  <!-- ==================== SEARCH & FILTER BAR ==================== -->
+  <section class="search-filter-section">
+    <div class="container">
+      <div class="search-filter-wrapper">
+        <!-- Search Bar -->
+        <div class="search-bar">
+          <input 
+            type="text" 
+            id="searchInput" 
+            placeholder="Search products, brands, or categories..."
+            class="search-input-main"
+          />
+          <button id="searchBtn" class="btn btn-sm btn-primary">
+            🔍 Search
+          </button>
+        </div>
 
-  <script>
-    /* ---------------- LOAD PRODUCTS ---------------- */
-    window.addEventListener("load", async () => {
-      const msgEl = document.getElementById("productsMsg");
-      msgEl.textContent = "Loading products...";
+        <!-- Quick Filters -->
+        <div class="quick-filters">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="fashion">Fashion</button>
+          <button class="filter-btn" data-filter="electronics">Electronics</button>
+          <button class="filter-btn" data-filter="home">Home</button>
+          <button class="filter-btn" data-filter="more">More Filters ⚙️</button>
+        </div>
+      </div>
+    </div>
+  </section>
 
-      try {
-        const products = await fetchProducts();
-
-        msgEl.textContent = "";
-        const grid = document.getElementById("productsGrid");
-
-        if (!products.length) {
-          grid.innerHTML = "<p>No products yet. Be the first to post!</p>";
-          return;
-        }
-
-        grid.innerHTML = products
-          .map(
-            (p) => `
-          <div class="product-card">
-            <img src="${p.imageUrl || "placeholder.png"}" alt="${escapeHtml(
-              p.title
-            )}" />
-            <h3>${escapeHtml(p.title)}</h3>
-            <p class="price">UGX ${Number(p.price).toLocaleString()}</p>
-            <p>${escapeHtml(p.description)}</p>
-            <p class="meta">Seller: ${escapeHtml(p.sellerName || "Unknown")}</p>
+  <!-- ==================== MAIN LAYOUT ==================== -->
+  <div class="products-page-layout">
+    <div class="container">
+      <div class="products-wrapper">
+        <!-- ==================== SIDEBAR FILTERS ==================== -->
+        <aside class="products-sidebar" id="productsSidebar">
+          <div class="sidebar-header">
+            <h3>Filters</h3>
+            <button id="clearFiltersBtn" class="btn-text">Clear All</button>
           </div>
-        `
-          )
-          .join("");
-      } catch (err) {
-        msgEl.textContent = "Error loading products: " + err.message;
+
+          <!-- Category Filter -->
+          <div class="filter-group">
+            <h4 class="filter-title">📂 Category</h4>
+            <div class="filter-options">
+              <label class="filter-option">
+                <input type="checkbox" name="category" value="all" checked />
+                <span>All Categories</span>
+              </label>
+              <label class="filter-option">
+                <input type="checkbox" name="category" value="fashion" />
+                <span>👕 Fashion & Clothing</span>
+              </label>
+              <label class="filter-option">
+                <input type="checkbox" name="category" value="electronics" />
+                <span>📱 Electronics</span>
+              </label>
+              <label class="filter-option">
+                <input type="checkbox" name="category" value="home" />
+                <span>🏠 Home & Living</span>
+              </label>
+              <label class="filter-option">
+                <input type="checkbox" name="category" value="vehicles" />
+                <span>🚗 Vehicles</span>
+              </label>
+              <label class="filter-option">
+                <input type="checkbox" name="category" value="business" />
+                <span>💼 Business & Services</span>
+              </label>
+              <label class="filter-option">
+                <input type="checkbox" name="category" value="education" />
+                <span>📚 Books & Education</span>
+              </label>
+              <label class="filter-option">
+                <input type="checkbox" name="category" value="beauty" />
+                <span>✨ Beauty & Personal Care</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Price Range Filter -->
+          <div class="filter-group">
+            <h4 class="filter-title">💰 Price Range (UGX)</h4>
+            <div class="price-range-inputs">
+              <input 
+                type="number" 
+                id="priceMin" 
+                placeholder="Min"
+                class="price-input"
+              />
+              <span>-</span>
+              <input 
+                type="number" 
+                id="priceMax" 
+                placeholder="Max"
+                class="price-input"
+              />
+            </div>
+            <div class="price-presets">
+              <button class="preset-btn" data-min="0" data-max="50000">Under 50K</button>
+              <button class="preset-btn" data-min="50000" data-max="200000">50K - 200K</button>
+              <button class="preset-btn" data-min="200000" data-max="1000000">200K - 1M</button>
+              <button class="preset-btn" data-min="1000000" data-max="999999999">Over 1M</button>
+            </div>
+          </div>
+
+          <!-- Condition Filter -->
+          <div class="filter-group">
+            <h4 class="filter-title">✓ Condition</h4>
+            <div class="filter-options">
+              <label class="filter-option">
+                <input type="checkbox" name="condition" value="new" />
+                <span>Brand New</span>
+              </label>
+              <label class="filter-option">
+                <input type="checkbox" name="condition" value="like-new" />
+                <span>Like New</span>
+              </label>
+              <label class="filter-option">
+                <input type="checkbox" name="condition" value="used" />
+                <span>Used</span>
+              </label>
+              <label class="filter-option">
+                <input type="checkbox" name="condition" value="refurbished" />
+                <span>Refurbished</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Seller Verification -->
+          <div class="filter-group">
+            <h4 class="filter-title">⭐ Seller Rating</h4>
+            <label class="filter-option">
+              <input type="checkbox" id="verifiedOnly" />
+              <span>Verified Sellers Only</span>
+            </label>
+            <label class="filter-option">
+              <input type="checkbox" id="ratedAbove4" />
+              <span>4+ Stars Only</span>
+            </label>
+          </div>
+
+          <!-- Apply Filters Button -->
+          <button id="applyFiltersBtn" class="btn btn-primary btn-full">
+            Apply Filters
+          </button>
+        </aside>
+
+        <!-- ==================== PRODUCTS SECTION ==================== -->
+        <main class="products-main">
+          <!-- Toolbar -->
+          <div class="products-toolbar">
+            <div class="results-info">
+              <span id="resultsCount">Loading...</span>
+              <button id="toggleSidebar" class="btn-icon" title="Toggle filters">
+                ☰ Filters
+              </button>
+            </div>
+
+            <!-- Sort Dropdown -->
+            <div class="sort-dropdown">
+              <select id="sortBy" class="form-input">
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="popularity">Most Popular</option>
+                <option value="rating">Best Rated</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Products Grid -->
+          <div id="productsGrid" class="products-grid"></div>
+
+          <!-- Loading State -->
+          <div id="loadingState" class="loading-state" style="display: none;">
+            <div class="spinner"></div>
+            <p>Loading products...</p>
+          </div>
+
+          <!-- Empty State -->
+          <div id="emptyState" class="empty-state" style="display: none;">
+            <div class="empty-icon">📦</div>
+            <h3>No products found</h3>
+            <p>Try adjusting your filters or search terms</p>
+            <a href="index.html" class="btn btn-primary">← Back to Home</a>
+          </div>
+
+          <!-- Load More Button -->
+          <div class="load-more-container" style="display: none;">
+            <button id="loadMoreBtn" class="btn btn-outline btn-large">
+              Load More Products
+            </button>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== PRODUCT DETAIL MODAL ==================== -->
+  <div id="productModal" class="modal" style="display: none;">
+    <div class="modal-content modal-large">
+      <button class="modal-close" id="modalClose">×</button>
+      
+      <div class="modal-body">
+        <div class="product-detail-grid">
+          <!-- Image -->
+          <div class="product-image-section">
+            <img id="modalImage" src="" alt="Product" class="modal-product-image" />
+            <div class="product-badges">
+              <span id="conditionBadge" class="badge"></span>
+              <span id="verifiedBadge" class="badge" style="display: none;">✓ Verified</span>
+            </div>
+          </div>
+
+          <!-- Details -->
+          <div class="product-details-section">
+            <h2 id="modalTitle" class="modal-title"></h2>
+            
+            <div class="product-price">
+              <span id="modalPrice" class="price-display"></span>
+            </div>
+
+            <div class="product-rating">
+              <span id="modalRating" class="rating-display">⭐ No ratings yet</span>
+              <span id="modalRatingCount" class="rating-count"></span>
+            </div>
+
+            <hr class="divider">
+
+            <!-- Seller Info -->
+            <div class="seller-info-card">
+              <h4>Seller Information</h4>
+              <div class="seller-details">
+                <p><strong>Name:</strong> <span id="modalSellerName"></span></p>
+                <p><strong>Location:</strong> <span id="modalLocation"></span></p>
+                <p><strong>Rating:</strong> <span id="modalSellerRating"></span></p>
+                <p><strong>Products:</strong> <span id="modalSellerProducts"></span></p>
+              </div>
+              <button class="btn btn-outline btn-full" id="contactSellerBtn">
+                💬 Contact Seller
+              </button>
+            </div>
+
+            <hr class="divider">
+
+            <!-- Description -->
+            <div class="product-description">
+              <h4>Description</h4>
+              <p id="modalDescription"></p>
+            </div>
+
+            <!-- Category & Condition -->
+            <div class="product-specs">
+              <div class="spec">
+                <span class="spec-label">Category:</span>
+                <span id="modalCategory" class="spec-value"></span>
+              </div>
+              <div class="spec">
+                <span class="spec-label">Condition:</span>
+                <span id="modalCondition" class="spec-value"></span>
+              </div>
+              <div class="spec">
+                <span class="spec-label">Posted:</span>
+                <span id="modalPosted" class="spec-value"></span>
+              </div>
+            </div>
+
+            <hr class="divider">
+
+            <!-- Action Buttons -->
+            <div class="modal-actions">
+              <button class="btn btn-large btn-primary" id="buyBtn">
+                🛒 Interested
+              </button>
+              <button class="btn btn-large btn-outline" id="shareBtn">
+                📤 Share
+              </button>
+            </div>
+
+            <!-- Safety Tips -->
+            <div class="safety-tips">
+              <h4>🛡️ Safety Tips</h4>
+              <ul>
+                <li>Meet in public places</li>
+                <li>Never send money in advance</li>
+                <li>Verify the product before paying</li>
+                <li>Use Sell-It UG's messaging system</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== BACK TO TOP BUTTON ==================== -->
+  <button id="backToTopBtn" class="back-to-top" style="display: none;">
+    ↑ Top
+  </button>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-section">
+          <h4>About</h4>
+          <ul>
+            <li><a href="#about">About Sell-It UG</a></li>
+            <li><a href="#blog">Blog</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4>Support</h4>
+          <ul>
+            <li><a href="#help">Help Center</a></li>
+            <li><a href="#safety">Safety Tips</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4>Policies</h4>
+          <ul>
+            <li><a href="#privacy">Privacy Policy</a></li>
+            <li><a href="#terms">Terms of Service</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="#facebook">Facebook</a></li>
+            <li><a href="#twitter">Twitter</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2025 Sell-It UG. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== SCRIPTS ==================== -->
+  <script src="app-improved.js"></script>
+  <script>
+    // ==================== STATE MANAGEMENT ====================
+    let allProducts = [];
+    let filteredProducts = [];
+    let currentPage = 1;
+    const itemsPerPage = 12;
+
+    const state = {
+      searchQuery: '',
+      category: 'all',
+      priceMin: 0,
+      priceMax: Infinity,
+      condition: [],
+      verifiedOnly: false,
+      ratedAbove4: false,
+      sortBy: 'newest'
+    };
+
+    // ==================== DOM ELEMENTS ====================
+    const productsGrid = document.getElementById('productsGrid');
+    const loadingState = document.getElementById('loadingState');
+    const emptyState = document.getElementById('emptyState');
+    const resultsCount = document.getElementById('resultsCount');
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const sortBy = document.getElementById('sortBy');
+    const productModal = document.getElementById('productModal');
+    const modalClose = document.getElementById('modalClose');
+    const backToTopBtn = document.getElementById('backToTopBtn');
+    const toggleSidebarBtn = document.getElementById('toggleSidebar');
+    const productsSidebar = document.getElementById('productsSidebar');
+
+    // ==================== INIT ==================== 
+    window.addEventListener('load', async () => {
+      try {
+        allProducts = await fetchProducts(100) || [];
+        filteredProducts = allProducts;
+        renderProducts();
+        setupEventListeners();
+      } catch (error) {
+        console.error('Error loading products:', error);
+        resultsCount.textContent = 'Error loading products';
       }
     });
 
-    /* ---------------- Escape helper ---------------- */
-    function escapeHtml(s = "") {
-      return s
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;");
+    // ==================== EVENT LISTENERS ====================
+    function setupEventListeners() {
+      // Search
+      searchBtn.addEventListener('click', performSearch);
+      searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') performSearch();
+      });
+
+      // Sort
+      sortBy.addEventListener('change', () => {
+        state.sortBy = sortBy.value;
+        sortProducts();
+        renderProducts();
+      });
+
+      // Filter buttons
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          if (e.target.dataset.filter === 'more') {
+            toggleSidebarBtn.click();
+          } else {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            state.category = e.target.dataset.filter;
+            applyFilters();
+          }
+        });
+      });
+
+      // Sidebar filters
+      document.querySelectorAll('input[name="category"]').forEach(input => {
+        input.addEventListener('change', updateCategoryFilter);
+      });
+
+      document.querySelectorAll('input[name="condition"]').forEach(input => {
+        input.addEventListener('change', () => {
+          state.condition = Array.from(document.querySelectorAll('input[name="condition"]:checked')).map(i => i.value);
+          applyFilters();
+        });
+      });
+
+      document.getElementById('verifiedOnly').addEventListener('change', (e) => {
+        state.verifiedOnly = e.target.checked;
+        applyFilters();
+      });
+
+      document.getElementById('ratedAbove4').addEventListener('change', (e) => {
+        state.ratedAbove4 = e.target.checked;
+        applyFilters();
+      });
+
+      // Price range
+      document.querySelectorAll('.preset-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          document.getElementById('priceMin').value = e.target.dataset.min;
+          document.getElementById('priceMax').value = e.target.dataset.max;
+          state.priceMin = Number(e.target.dataset.min);
+          state.priceMax = Number(e.target.dataset.max);
+          applyFilters();
+        });
+      });
+
+      document.getElementById('applyFiltersBtn').addEventListener('click', applyFilters);
+      document.getElementById('clearFiltersBtn').addEventListener('click', clearFilters);
+
+      // Modal
+      modalClose.addEventListener('click', closeModal);
+      productModal.addEventListener('click', (e) => {
+        if (e.target === productModal) closeModal();
+      });
+
+      // Back to top
+      window.addEventListener('scroll', () => {
+        backToTopBtn.style.display = window.scrollY > 300 ? 'block' : 'none';
+      });
+
+      backToTopBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      // Toggle sidebar on mobile
+      toggleSidebarBtn.addEventListener('click', () => {
+        productsSidebar.classList.toggle('active');
+      });
+    }
+
+    // ==================== FILTER FUNCTIONS ====================
+    function updateCategoryFilter() {
+      const checked = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(i => i.value);
+      state.category = checked.includes('all') ? 'all' : checked[0] || 'all';
+    }
+
+    function performSearch() {
+      state.searchQuery = searchInput.value.trim().toLowerCase();
+      applyFilters();
+    }
+
+    function applyFilters() {
+      filteredProducts = allProducts.filter(product => {
+        // Search
+        if (state.searchQuery) {
+          const searchLower = state.searchQuery;
+          if (!product.title.toLowerCase().includes(searchLower) && 
+              !product.description.toLowerCase().includes(searchLower)) {
+            return false;
+          }
+        }
+
+        // Category
+        if (state.category !== 'all' && product.category !== state.category) {
+          return false;
+        }
+
+        // Price
+        if (product.price < state.priceMin || product.price > state.priceMax) {
+          return false;
+        }
+
+        // Condition
+        if (state.condition.length > 0 && !state.condition.includes(product.condition)) {
+          return false;
+        }
+
+        // Verified
+        if (state.verifiedOnly && !product.verified) {
+          return false;
+        }
+
+        // Rating
+        if (state.ratedAbove4 && product.rating < 4) {
+          return false;
+        }
+
+        return true;
+      });
+
+      sortProducts();
+      currentPage = 1;
+      renderProducts();
+      productsSidebar.classList.remove('active');
+    }
+
+    function sortProducts() {
+      const sorted = [...filteredProducts];
+
+      switch (state.sortBy) {
+        case 'newest':
+          sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          break;
+        case 'oldest':
+          sorted.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+          break;
+        case 'price-low':
+          sorted.sort((a, b) => a.price - b.price);
+          break;
+        case 'price-high':
+          sorted.sort((a, b) => b.price - a.price);
+          break;
+        case 'popularity':
+          sorted.sort((a, b) => (b.views || 0) - (a.views || 0));
+          break;
+        case 'rating':
+          sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+          break;
+      }
+
+      filteredProducts = sorted;
+    }
+
+    function clearFilters() {
+      state.searchQuery = '';
+      state.category = 'all';
+      state.priceMin = 0;
+      state.priceMax = Infinity;
+      state.condition = [];
+      state.verifiedOnly = false;
+      state.ratedAbove4 = false;
+      state.sortBy = 'newest';
+
+      searchInput.value = '';
+      document.getElementById('priceMin').value = '';
+      document.getElementById('priceMax').value = '';
+      document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+      document.querySelector('input[name="category"][value="all"]').checked = true;
+      sortBy.value = 'newest';
+
+      applyFilters();
+    }
+
+    // ==================== RENDER FUNCTIONS ====================
+    function renderProducts() {
+      resultsCount.textContent = `Showing ${filteredProducts.length} product${filteredProducts.length !== 1 ? 's' : ''}`;
+
+      if (filteredProducts.length === 0) {
+        productsGrid.style.display = 'none';
+        emptyState.style.display = 'block';
+        loadingState.style.display = 'none';
+        return;
+      }
+
+      productsGrid.style.display = 'grid';
+      emptyState.style.display = 'none';
+      loadingState.style.display = 'none';
+
+      const start = 0;
+      const end = currentPage * itemsPerPage;
+      const paginated = filteredProducts.slice(start, end);
+
+      productsGrid.innerHTML = paginated.map(product => createProductCard(product)).join('');
+
+      // Show load more button if there are more products
+      document.querySelector('.load-more-container').style.display = 
+        end < filteredProducts.length ? 'block' : 'none';
+    }
+
+    function createProductCard(product) {
+      const dateObj = product.createdAt instanceof Date ? product.createdAt : new Date(product.createdAt);
+      const daysAgo = Math.floor((Date.now() - dateObj) / (1000 * 60 * 60 * 24));
+      const timeAgo = daysAgo === 0 ? 'Today' : `${daysAgo}d ago`;
+
+      const ratingDisplay = product.rating ? `⭐ ${product.rating.toFixed(1)} (${product.totalRatings || 0})` : 'No ratings';
+      const conditionBadge = product.condition === 'new' ? '✨ New' : 
+                             product.condition === 'like-new' ? '🌟 Like New' : 
+                             product.condition === 'used' ? '✓ Used' : 'Refurbished';
+
+      return `
+        <div class="product-card" onclick="openProductDetail('${product.id}')">
+          <div class="product-image-wrapper">
+            <img src="${product.imageUrl || 'placeholder.png'}" alt="${escapeHtml(product.title)}" class="product-image" />
+            <span class="product-badge">${conditionBadge}</span>
+            <span class="product-time">${timeAgo}</span>
+          </div>
+          <div class="product-info">
+            <h3 class="product-title">${escapeHtml(product.title.substring(0, 50))}</h3>
+            <p class="product-price">UGX ${Number(product.price).toLocaleString()}</p>
+            <div class="product-rating-small">${ratingDisplay}</div>
+            <p class="product-seller">
+              ${product.verified ? '✓ ' : ''}${escapeHtml(product.sellerName || 'Seller')}
+            </p>
+            <p class="product-category">${product.category}</p>
+          </div>
+        </div>
+      `;
+    }
+
+    // ==================== MODAL FUNCTIONS ====================
+    function openProductDetail(productId) {
+      const product = allProducts.find(p => p.id === productId);
+      if (!product) return;
+
+      document.getElementById('modalImage').src = product.imageUrl || 'placeholder.png';
+      document.getElementById('modalTitle').textContent = product.title;
+      document.getElementById('modalPrice').textContent = `UGX ${Number(product.price).toLocaleString()}`;
+      document.getElementById('modalDescription').textContent = product.description;
+      document.getElementById('modalCategory').textContent = product.category;
+      document.getElementById('modalCondition').textContent = 
+        product.condition === 'new' ? 'Brand New' : 
+        product.condition === 'like-new' ? 'Like New' : product.condition;
+      document.getElementById('modalSellerName').textContent = product.sellerName || 'Unknown';
+      document.getElementById('modalLocation').textContent = product.location || 'Not specified';
+      document.getElementById('modalSellerRating').textContent = 
+        product.rating ? `⭐ ${product.rating.toFixed(1)}` : 'No ratings';
+      document.getElementById('modalSellerProducts').textContent = product.productsCount || '0';
+
+      const dateObj = product.createdAt instanceof Date ? product.createdAt : new Date(product.createdAt);
+      document.getElementById('modalPosted').textContent = dateObj.toLocaleDateString();
+
+      if (product.rating) {
+        document.getElementById('modalRating').textContent = `⭐ ${product.rating.toFixed(1)} out of 5`;
+        document.getElementById('modalRatingCount').textContent = `(${product.totalRatings || 0} ratings)`;
+      }
+
+      if (product.verified) {
+        document.getElementById('verifiedBadge').style.display = 'inline-block';
+      } else {
+        document.getElementById('verifiedBadge').style.display = 'none';
+      }
+
+      productModal.style.display = 'flex';
+    }
+
+    function closeModal() {
+      productModal.style.display = 'none';
+    }
+
+    // ==================== LOAD MORE ====================
+    document.getElementById('loadMoreBtn')?.addEventListener('click', () => {
+      currentPage++;
+      renderProducts();
+      window.scrollTo({ top: productsGrid.offsetTop - 100, behavior: 'smooth' });
+    });
+
+    // ==================== HELPER FUNCTIONS ====================
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ==================== AUTH STATE ====================
+    if (window.firebase && window.firebase.auth) {
+      firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+          document.getElementById('nav-login').style.display = 'none';
+          document.getElementById('nav-register').style.display = 'none';
+          document.getElementById('nav-logout').style.display = 'inline-block';
+          document.getElementById('nav-post-product').style.display = 'inline-block';
+
+          document.getElementById('nav-logout').addEventListener('click', async (e) => {
+            e.preventDefault();
+            try {
+              await logoutUser();
+              window.location.href = 'index.html';
+            } catch (error) {
+              console.error('Logout error:', error);
+            }
+          });
+        }
+      });
     }
   </script>
 </body>
