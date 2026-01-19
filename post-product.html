@@ -1,101 +1,665 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Post Product — Sell-It UG</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Post a product on Sell-It UG - Uganda's trusted digital marketplace. Reach thousands of buyers.">
+  <meta name="robots" content="noindex, nofollow">
+  
+  <title>Post Product - Sell-It UG | Uganda's Digital Marketplace</title>
+  <link rel="stylesheet" href="style-improved.css">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
 
-  <header class="header container">
-    <div class="logo">Sell-It UG</div>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="products.html">Products</a>
-      <a href="#" id="logoutLink" style="display:none">Logout</a>
-    </nav>
+  <!-- Firebase Compat SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+</head>
+
+<body>
+  <!-- ==================== HEADER ==================== -->
+  <header class="header">
+    <div class="container">
+      <div class="nav-wrapper">
+        <div class="logo">
+          <span class="logo-icon">🛍️</span>
+          <span class="logo-text">Sell-It UG</span>
+        </div>
+
+        <nav class="nav-menu" id="navMenu">
+          <a href="index.html" class="nav-link">Home</a>
+          <a href="products.html" class="nav-link">Browse</a>
+          <a href="dashboard.html" class="nav-link" id="navDashboard">My Dashboard</a>
+        </nav>
+
+        <div class="nav-actions">
+          <a href="profile.html" class="btn btn-sm btn-outline" id="navProfile" style="display:none">Profile</a>
+          <a href="#" id="nav-logout" class="btn btn-sm btn-danger" style="display:none">Logout</a>
+          <button class="menu-toggle" id="menuToggle">☰</button>
+        </div>
+      </div>
+    </div>
   </header>
 
-  <main class="container form-card">
-    <h1>Post a Product</h1>
+  <!-- ==================== PAGE HEADER ==================== -->
+  <section class="page-header">
+    <div class="container">
+      <h1>Post a Product</h1>
+      <p>List your product on Sell-It UG and reach thousands of buyers across Uganda</p>
+    </div>
+  </section>
 
-    <form id="postForm">
-      <label>Title
-        <input id="title" required />
-      </label>
+  <!-- ==================== MAIN CONTENT ==================== -->
+  <main class="container post-product-main">
+    <div class="post-product-layout">
+      <!-- Left: Form -->
+      <div class="post-product-form-section">
+        <form id="postForm" class="post-form" novalidate>
+          <!-- ==================== FORM SECTIONS ==================== -->
 
-      <label>Description
-        <textarea id="description" rows="4"></textarea>
-      </label>
+          <!-- PRODUCT INFO SECTION -->
+          <fieldset class="form-section">
+            <legend class="form-section-title">📋 Product Information</legend>
 
-      <label>Price (UGX)
-        <input id="price" type="number" min="0" required />
-      </label>
+            <!-- Title -->
+            <div class="form-group">
+              <label for="title" class="form-label">Product Title <span class="required">*</span></label>
+              <input 
+                id="title" 
+                type="text" 
+                placeholder="e.g., Brand New iPhone 13 Pro Max"
+                class="form-input"
+                maxlength="100"
+                required
+              />
+              <div class="form-helper">
+                <span id="titleCount">0</span>/100 characters
+              </div>
+              <span class="form-error" id="titleError"></span>
+            </div>
 
-      <label>Category
-        <select id="category">
-          <option>General</option>
-          <option>Fashion</option>
-          <option>Electronics</option>
-        </select>
-      </label>
+            <!-- Description -->
+            <div class="form-group">
+              <label for="description" class="form-label">Description <span class="required">*</span></label>
+              <textarea 
+                id="description" 
+                placeholder="Describe your product in detail. Include brand, condition, features, etc."
+                class="form-input"
+                rows="6"
+                maxlength="5000"
+                required
+              ></textarea>
+              <div class="form-helper">
+                <span id="descCount">0</span>/5000 characters
+              </div>
+              <span class="form-error" id="descError"></span>
+            </div>
+          </fieldset>
 
-      <label>Image
-        <input id="imageFile" type="file" accept="image/*" />
-      </label>
+          <!-- PRICE & CATEGORY SECTION -->
+          <fieldset class="form-section">
+            <legend class="form-section-title">💰 Price & Category</legend>
 
-      <button type="submit" class="btn">Post Product</button>
-    </form>
+            <div class="form-row">
+              <!-- Price -->
+              <div class="form-group form-col-half">
+                <label for="price" class="form-label">Price (UGX) <span class="required">*</span></label>
+                <div class="price-input-wrapper">
+                  <span class="price-prefix">UGX</span>
+                  <input 
+                    id="price" 
+                    type="number" 
+                    placeholder="0"
+                    class="form-input price-input"
+                    min="1000"
+                    step="1000"
+                    required
+                  />
+                </div>
+                <span class="form-error" id="priceError"></span>
+              </div>
 
-    <p id="postMsg" class="msg"></p>
+              <!-- Condition -->
+              <div class="form-group form-col-half">
+                <label for="condition" class="form-label">Condition <span class="required">*</span></label>
+                <select id="condition" class="form-input" required>
+                  <option value="">-- Select condition --</option>
+                  <option value="new">Brand New</option>
+                  <option value="like-new">Like New</option>
+                  <option value="used">Used</option>
+                  <option value="refurbished">Refurbished</option>
+                </select>
+                <span class="form-error" id="conditionError"></span>
+              </div>
+            </div>
+
+            <!-- Category -->
+            <div class="form-group">
+              <label for="category" class="form-label">Category <span class="required">*</span></label>
+              <select id="category" class="form-input" required>
+                <option value="">-- Select a category --</option>
+                <option value="fashion">👕 Fashion & Clothing</option>
+                <option value="electronics">📱 Electronics</option>
+                <option value="home">🏠 Home & Living</option>
+                <option value="vehicles">🚗 Vehicles</option>
+                <option value="business">💼 Business & Services</option>
+                <option value="entertainment">🎮 Games & Entertainment</option>
+                <option value="education">📚 Books & Education</option>
+                <option value="beauty">✨ Beauty & Personal Care</option>
+                <option value="other">📦 Other</option>
+              </select>
+              <span class="form-error" id="categoryError"></span>
+            </div>
+          </fieldset>
+
+          <!-- IMAGE SECTION -->
+          <fieldset class="form-section">
+            <legend class="form-section-title">📸 Product Images</legend>
+
+            <div class="form-group">
+              <label for="imageFile" class="form-label">Upload Image <span class="required">*</span></label>
+              
+              <!-- File Input -->
+              <div class="file-input-wrapper">
+                <input 
+                  id="imageFile" 
+                  type="file" 
+                  accept="image/*"
+                  class="file-input"
+                  required
+                />
+                <label for="imageFile" class="file-input-label">
+                  <span class="file-icon">📷</span>
+                  <span class="file-text">
+                    <strong>Click to upload</strong> or drag and drop
+                  </span>
+                  <span class="file-hint">PNG, JPG, GIF up to 5MB</span>
+                </label>
+              </div>
+
+              <!-- Image Preview -->
+              <div id="imagePreview" class="image-preview" style="display: none;">
+                <img id="previewImg" src="" alt="Product preview" class="preview-img">
+                <button type="button" class="btn-remove-image" id="removeImageBtn">×</button>
+                <div class="preview-info">
+                  <p id="fileName">File name</p>
+                  <p id="fileSize">Size</p>
+                </div>
+              </div>
+
+              <span class="form-error" id="imageError"></span>
+            </div>
+
+            <div class="form-hint-box">
+              <p>💡 <strong>Tips for better sales:</strong></p>
+              <ul>
+                <li>Use clear, well-lit photos</li>
+                <li>Show the product from different angles</li>
+                <li>Avoid watermarks</li>
+                <li>Include details and condition clearly</li>
+              </ul>
+            </div>
+          </fieldset>
+
+          <!-- LOCATION SECTION -->
+          <fieldset class="form-section">
+            <legend class="form-section-title">📍 Location</legend>
+
+            <div class="form-group">
+              <label for="location" class="form-label">Your Location <span class="required">*</span></label>
+              <input 
+                id="location" 
+                type="text" 
+                placeholder="e.g., Kampala, Nakasero"
+                class="form-input"
+                required
+              />
+              <span class="form-helper">Buyers prefer knowing where the seller is located</span>
+              <span class="form-error" id="locationError"></span>
+            </div>
+          </fieldset>
+
+          <!-- CONTACT SECTION -->
+          <fieldset class="form-section">
+            <legend class="form-section-title">📞 Contact Information</legend>
+
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="acceptContact" class="form-checkbox" checked />
+                <span>Allow buyers to contact you via the platform</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <!-- SUBMISSION -->
+          <div class="form-section form-actions">
+            <button type="submit" class="btn btn-large btn-primary btn-submit" id="submitBtn">
+              <span class="btn-text">Post Product Now</span>
+              <span class="btn-loader" id="btnLoader" style="display: none;">⏳</span>
+            </button>
+
+            <a href="products.html" class="btn btn-large btn-outline">Cancel</a>
+          </div>
+
+          <!-- Messages -->
+          <div id="postMsg" class="form-message" style="display: none;"></div>
+        </form>
+      </div>
+
+      <!-- Right: Info/Tips -->
+      <aside class="post-product-sidebar">
+        <div class="sidebar-card">
+          <h3>💡 Posting Tips</h3>
+          <ul class="tips-list">
+            <li>
+              <strong>Be specific</strong> - Mention brand, model, and features
+            </li>
+            <li>
+              <strong>Accurate pricing</strong> - Check similar products first
+            </li>
+            <li>
+              <strong>Good photos</strong> - Clear images get 5x more views
+            </li>
+            <li>
+              <strong>Honest condition</strong> - Avoid returns and disputes
+            </li>
+            <li>
+              <strong>Complete details</strong> - Saves you from repeated messages
+            </li>
+          </ul>
+        </div>
+
+        <div class="sidebar-card">
+          <h3>✓ Quality Checklist</h3>
+          <ul class="checklist">
+            <li id="check1">
+              <input type="checkbox" disabled> Title (5-100 chars)
+            </li>
+            <li id="check2">
+              <input type="checkbox" disabled> Description (20-5000 chars)
+            </li>
+            <li id="check3">
+              <input type="checkbox" disabled> Price set
+            </li>
+            <li id="check4">
+              <input type="checkbox" disabled> Category selected
+            </li>
+            <li id="check5">
+              <input type="checkbox" disabled> Image uploaded
+            </li>
+          </ul>
+        </div>
+
+        <div class="sidebar-card success-rate">
+          <h3>📊 Success Tips</h3>
+          <p class="stat">
+            Products with <strong>good photos</strong> sell <strong>5x faster</strong>
+          </p>
+          <p class="stat">
+            <strong>Detailed descriptions</strong> reduce buyer questions by 80%
+          </p>
+        </div>
+      </aside>
+    </div>
   </main>
 
-  <script src="app.js"></script>
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-section">
+          <h4>About</h4>
+          <ul>
+            <li><a href="#about">About Sell-It UG</a></li>
+            <li><a href="#guidelines">Seller Guidelines</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4>Support</h4>
+          <ul>
+            <li><a href="#help">Help Center</a></li>
+            <li><a href="#contact">Contact Us</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4>Policies</h4>
+          <ul>
+            <li><a href="#terms">Terms of Service</a></li>
+            <li><a href="#privacy">Privacy Policy</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2025 Sell-It UG. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== SCRIPTS ==================== -->
+  <script src="app-improved.js"></script>
   <script>
-    onAuthReady(async (user) => {
-      if (!user) {
-        alert('You must be logged in to post products.');
-        location.href = 'login.html';
-        return;
-      }
+    // ==================== FORM ELEMENTS ====================
+    const postForm = document.getElementById('postForm');
+    const titleInput = document.getElementById('title');
+    const descInput = document.getElementById('description');
+    const priceInput = document.getElementById('price');
+    const categoryInput = document.getElementById('category');
+    const conditionInput = document.getElementById('condition');
+    const imageInput = document.getElementById('imageFile');
+    const locationInput = document.getElementById('location');
+    const submitBtn = document.getElementById('submitBtn');
+    const postMsg = document.getElementById('postMsg');
+    const btnLoader = document.getElementById('btnLoader');
+    const btnText = document.querySelector('.btn-text');
 
-      if (!user.emailVerified) {
-        alert('Please verify your email before posting.');
-        location.href = 'index.html';
-        return;
-      }
+    // ==================== AUTH CHECK ====================
+    let currentUserData = null;
 
-      document.getElementById('logoutLink').style.display = 'inline-block';
+    if (window.firebase && window.firebase.auth) {
+      firebase.auth().onAuthStateChanged(async (user) => {
+        if (!user) {
+          alert('You must be logged in to post products.');
+          window.location.href = 'login.html';
+          return;
+        }
+
+        // Reload to get updated email verification status
+        await user.reload();
+
+        if (!user.emailVerified) {
+          alert('Please verify your email before posting. Check your inbox for a verification link.');
+          window.location.href = 'index.html';
+          return;
+        }
+
+        // Fetch user data
+        try {
+          const userDoc = await db.collection('users').doc(user.uid).get();
+          if (userDoc.exists) {
+            currentUserData = userDoc.data();
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+
+        // Show dashboard link
+        const navDashboard = document.getElementById('navDashboard');
+        if (navDashboard) navDashboard.style.display = 'inline-block';
+      });
+    }
+
+    // ==================== CHARACTER COUNTERS ====================
+    titleInput.addEventListener('input', () => {
+      document.getElementById('titleCount').textContent = titleInput.value.length;
+      validateTitle();
+      updateChecklist();
     });
 
-    document.getElementById('postForm').addEventListener('submit', async (e) => {
+    descInput.addEventListener('input', () => {
+      document.getElementById('descCount').textContent = descInput.value.length;
+      validateDescription();
+      updateChecklist();
+    });
+
+    // ==================== IMAGE HANDLING ====================
+    const imagePreview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+    const removeImageBtn = document.getElementById('removeImageBtn');
+    const fileInputLabel = document.querySelector('.file-input-label');
+
+    // File input change
+    imageInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        previewImage(file);
+      }
+    });
+
+    // Drag and drop
+    fileInputLabel.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      fileInputLabel.classList.add('dragover');
+    });
+
+    fileInputLabel.addEventListener('dragleave', () => {
+      fileInputLabel.classList.remove('dragover');
+    });
+
+    fileInputLabel.addEventListener('drop', (e) => {
+      e.preventDefault();
+      fileInputLabel.classList.remove('dragover');
+      
+      const files = e.dataTransfer.files;
+      if (files.length > 0 && files[0].type.startsWith('image/')) {
+        imageInput.files = files;
+        previewImage(files[0]);
+      } else {
+        showMessage('Please drop an image file', 'error');
+      }
+    });
+
+    // Preview function
+    function previewImage(file) {
+      if (!file.type.startsWith('image/')) {
+        showMessage('Please select an image file', 'error');
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        showMessage('Image must be smaller than 5MB', 'error');
+        imageInput.value = '';
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        previewImg.src = e.target.result;
+        document.getElementById('fileName').textContent = file.name;
+        document.getElementById('fileSize').textContent = (file.size / 1024).toFixed(2) + ' KB';
+        imagePreview.style.display = 'block';
+        updateChecklist();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Remove image
+    removeImageBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      imageInput.value = '';
+      imagePreview.style.display = 'none';
+      updateChecklist();
+    });
+
+    // ==================== FORM VALIDATION ====================
+    function validateTitle() {
+      const title = titleInput.value.trim();
+      const titleError = document.getElementById('titleError');
+      
+      if (title.length < 5) {
+        titleError.textContent = 'Title must be at least 5 characters';
+        return false;
+      }
+      if (title.length > 100) {
+        titleError.textContent = 'Title must be 100 characters or less';
+        return false;
+      }
+      titleError.textContent = '';
+      return true;
+    }
+
+    function validateDescription() {
+      const desc = descInput.value.trim();
+      const descError = document.getElementById('descError');
+      
+      if (desc.length < 20) {
+        descError.textContent = 'Description must be at least 20 characters';
+        return false;
+      }
+      if (desc.length > 5000) {
+        descError.textContent = 'Description must be 5000 characters or less';
+        return false;
+      }
+      descError.textContent = '';
+      return true;
+    }
+
+    function validatePrice() {
+      const price = Number(priceInput.value);
+      const priceError = document.getElementById('priceError');
+      
+      if (isNaN(price) || price < 1000) {
+        priceError.textContent = 'Price must be at least UGX 1,000';
+        return false;
+      }
+      priceError.textContent = '';
+      return true;
+    }
+
+    function validateCategory() {
+      const categoryError = document.getElementById('categoryError');
+      if (!categoryInput.value) {
+        categoryError.textContent = 'Please select a category';
+        return false;
+      }
+      categoryError.textContent = '';
+      return true;
+    }
+
+    function validateCondition() {
+      const conditionError = document.getElementById('conditionError');
+      if (!conditionInput.value) {
+        conditionError.textContent = 'Please select product condition';
+        return false;
+      }
+      conditionError.textContent = '';
+      return true;
+    }
+
+    function validateImage() {
+      const imageError = document.getElementById('imageError');
+      if (!imageInput.files || !imageInput.files[0]) {
+        imageError.textContent = 'Please upload a product image';
+        return false;
+      }
+      imageError.textContent = '';
+      return true;
+    }
+
+    function validateLocation() {
+      const locationError = document.getElementById('locationError');
+      if (!locationInput.value.trim()) {
+        locationError.textContent = 'Please enter your location';
+        return false;
+      }
+      locationError.textContent = '';
+      return true;
+    }
+
+    // ==================== CHECKLIST UPDATE ====================
+    function updateChecklist() {
+      document.getElementById('check1').querySelector('input').checked = titleInput.value.length >= 5 && titleInput.value.length <= 100;
+      document.getElementById('check2').querySelector('input').checked = descInput.value.length >= 20 && descInput.value.length <= 5000;
+      document.getElementById('check3').querySelector('input').checked = Number(priceInput.value) > 0;
+      document.getElementById('check4').querySelector('input').checked = !!categoryInput.value;
+      document.getElementById('check5').querySelector('input').checked = imageInput.files && imageInput.files.length > 0;
+    }
+
+    // Real-time validation
+    priceInput.addEventListener('blur', validatePrice);
+    categoryInput.addEventListener('change', () => { validateCategory(); updateChecklist(); });
+    conditionInput.addEventListener('change', validateCondition);
+    locationInput.addEventListener('blur', validateLocation);
+
+    // ==================== FORM SUBMISSION ====================
+    postForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const msgEl = document.getElementById('postMsg');
+      // Validate all fields
+      if (!validateTitle() || !validateDescription() || !validatePrice() || 
+          !validateCategory() || !validateCondition() || !validateImage() || 
+          !validateLocation()) {
+        showMessage('Please fix the errors above', 'error');
+        return;
+      }
 
-      const title = title.value.trim();
-      const description = description.value.trim();
-      const price = Number(price.value);
-      const category = category.value;
-      const imgFile = imageFile.files[0];
-
-      msgEl.textContent = 'Posting product...';
+      // Show loading
+      submitBtn.disabled = true;
+      btnLoader.style.display = 'inline';
+      btnText.style.display = 'none';
 
       try {
-        await postProduct({ title, description, price, category, imgFile });
-        msgEl.textContent = 'Product posted successfully!';
-        document.getElementById('postForm').reset();
-      } catch (err) {
-        msgEl.textContent = 'Error: ' + err.message;
+        const title = titleInput.value.trim();
+        const description = descInput.value.trim();
+        const price = Number(priceInput.value);
+        const category = categoryInput.value;
+        const condition = conditionInput.value;
+        const imgFile = imageInput.files[0];
+        const location = locationInput.value.trim();
+
+        await postProduct({
+          title,
+          description,
+          price,
+          category,
+          condition,
+          imgFile,
+          location
+        });
+
+        showMessage('✓ Product posted successfully! Redirecting...', 'success');
+        
+        setTimeout(() => {
+          window.location.href = 'products.html';
+        }, 2000);
+
+      } catch (error) {
+        submitBtn.disabled = false;
+        btnLoader.style.display = 'none';
+        btnText.style.display = 'inline';
+        showMessage(error.message || 'Error posting product', 'error');
       }
     });
 
-    document.getElementById('logoutLink').addEventListener('click', async (e) => {
-      e.preventDefault();
-      await logoutUser();
-      location.href = 'index.html';
-    });
+    // ==================== MESSAGE DISPLAY ====================
+    function showMessage(message, type) {
+      postMsg.textContent = message;
+      postMsg.className = `form-message form-message-${type}`;
+      postMsg.style.display = 'block';
+
+      if (type === 'error') {
+        postMsg.classList.add('error');
+        setTimeout(() => {
+          postMsg.style.display = 'none';
+        }, 5000);
+      }
+    }
+
+    // ==================== LOGOUT ====================
+    const logoutLink = document.getElementById('nav-logout');
+    if (logoutLink) {
+      logoutLink.addEventListener('click', async (e) => {
+        e.preventDefault();
+        try {
+          await logoutUser();
+          window.location.href = 'index.html';
+        } catch (error) {
+          console.error('Logout error:', error);
+        }
+      });
+    }
+
+    // Mobile menu toggle
+    const menuToggle = document.getElementById('menuToggle');
+    const navMenu = document.getElementById('navMenu');
+    if (menuToggle) {
+      menuToggle.addEventListener('click', () => {
+        navMenu.classList.toggle('active');
+      });
+    }
   </script>
 </body>
 </html>
