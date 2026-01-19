@@ -1,90 +1,507 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Register — Sell-It UG</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <header class="header container">
-    <div class="logo">Sell-It UG</div>
-    <nav><a href="index.html">Home</a> <a href="login.html">Login</a></nav>
-  </header>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Create a free account on Sell-It UG - Uganda's trusted digital marketplace. Start selling or buying today.">
+  <meta name="robots" content="noindex, nofollow">
+  
+  <title>Register - Sell-It UG | Uganda's Digital Marketplace</title>
+  <link rel="stylesheet" href="style-improved.css">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
 
-  <main class="container form-card">
-    <h1>Create free account</h1>
-    <form id="registerForm">
-      <label>Full name<input id="fullName" type="text" required /></label>
-      <label>Email<input id="email" type="email" required /></label>
-      <label>Phone<input id="phone" type="tel" /></label>
-      <label>Business Type
-        <select id="business">
-          <option value="other">Other</option>
-          <option value="fashion">Fashion</option>
-          <option value="electronics">Electronics</option>
-          <option value="food">Food</option>
-          <option value="handmade">Handmade</option>
-        </select>
-      </label>
-      <label>Password<input id="password" type="password" required minlength="6" /></label>
-      <button type="submit" class="btn">Create Account</button>
-    </form>
-    <p id="registerMsg" class="msg"></p>
-  </main>
-
-  <!-- Firebase compat SDKs -->
+  <!-- Firebase Compat SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+</head>
 
-  <!-- Your app logic -->
-  <script src="app.js"></script>
+<body class="auth-body">
+  <!-- ==================== HEADER ==================== -->
+  <header class="header auth-header">
+    <div class="container">
+      <div class="nav-wrapper">
+        <div class="logo">
+          <span class="logo-icon">🛍️</span>
+          <span class="logo-text">Sell-It UG</span>
+        </div>
 
+        <nav class="nav-menu">
+          <a href="index.html" class="nav-link">← Back to Home</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== AUTH CONTAINER ==================== -->
+  <main class="auth-main">
+    <div class="auth-container">
+      <!-- Left Side: Form -->
+      <div class="auth-form-section">
+        <div class="auth-form-wrapper">
+          <h1 class="auth-title">Join Sell-It UG</h1>
+          <p class="auth-subtitle">Create a free account to start selling or buying today</p>
+
+          <!-- Registration Form -->
+          <form id="registerForm" class="auth-form" novalidate>
+            <!-- Full Name -->
+            <div class="form-group">
+              <label for="fullName" class="form-label">Full Name <span class="required">*</span></label>
+              <input 
+                id="fullName" 
+                type="text" 
+                placeholder="Your full name"
+                class="form-input"
+                required
+                autocomplete="name"
+              />
+              <span class="form-error" id="fullNameError"></span>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+              <label for="email" class="form-label">Email Address <span class="required">*</span></label>
+              <input 
+                id="email" 
+                type="email" 
+                placeholder="your@email.com"
+                class="form-input"
+                required
+                autocomplete="email"
+              />
+              <span class="form-helper">We'll send you a verification link</span>
+              <span class="form-error" id="emailError"></span>
+            </div>
+
+            <!-- Phone -->
+            <div class="form-group">
+              <label for="phone" class="form-label">Phone Number <span class="required">*</span></label>
+              <input 
+                id="phone" 
+                type="tel" 
+                placeholder="+256 700 123 456"
+                class="form-input"
+                required
+                autocomplete="tel"
+              />
+              <span class="form-helper">Uganda phone number (e.g., +256 700 123 456 or 0700 123 456)</span>
+              <span class="form-error" id="phoneError"></span>
+            </div>
+
+            <!-- Business Type -->
+            <div class="form-group">
+              <label for="business" class="form-label">What do you sell? <span class="required">*</span></label>
+              <select id="business" class="form-input" required>
+                <option value="">-- Select your business type --</option>
+                <option value="fashion">👕 Fashion & Clothing</option>
+                <option value="electronics">📱 Electronics</option>
+                <option value="home">🏠 Home & Living</option>
+                <option value="food">🍔 Food & Beverages</option>
+                <option value="handmade">✋ Handmade & Crafts</option>
+                <option value="services">💼 Services</option>
+                <option value="buyer">🛒 I'm a Buyer (Not a Seller)</option>
+                <option value="other">📦 Other</option>
+              </select>
+              <span class="form-error" id="businessError"></span>
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+              <label for="password" class="form-label">Password <span class="required">*</span></label>
+              <div class="password-input-wrapper">
+                <input 
+                  id="password" 
+                  type="password" 
+                  placeholder="Create a strong password"
+                  class="form-input"
+                  required
+                  minlength="6"
+                  autocomplete="new-password"
+                />
+                <button 
+                  type="button" 
+                  class="toggle-password" 
+                  id="togglePassword"
+                  aria-label="Toggle password visibility"
+                >
+                  👁️
+                </button>
+              </div>
+              
+              <!-- Password Strength Indicator -->
+              <div class="password-strength">
+                <div class="strength-bar">
+                  <div id="strengthFill" class="strength-fill"></div>
+                </div>
+                <p id="strengthText" class="strength-text">At least 6 characters</p>
+              </div>
+              
+              <span class="form-error" id="passwordError"></span>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="form-group">
+              <label for="confirmPassword" class="form-label">Confirm Password <span class="required">*</span></label>
+              <div class="password-input-wrapper">
+                <input 
+                  id="confirmPassword" 
+                  type="password" 
+                  placeholder="Confirm your password"
+                  class="form-input"
+                  required
+                  autocomplete="new-password"
+                />
+                <button 
+                  type="button" 
+                  class="toggle-password" 
+                  id="toggleConfirm"
+                  aria-label="Toggle password visibility"
+                >
+                  👁️
+                </button>
+              </div>
+              <span class="form-error" id="confirmPasswordError"></span>
+            </div>
+
+            <!-- Terms & Conditions -->
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="agreeTerms" class="form-checkbox" required />
+                <span>I agree to the <a href="#terms" class="link">Terms of Service</a> and <a href="#privacy" class="link">Privacy Policy</a></span>
+              </label>
+              <span class="form-error" id="termsError"></span>
+            </div>
+
+            <!-- Newsletter Opt-in -->
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="newsletter" class="form-checkbox" checked />
+                <span>Keep me updated with tips and new features</span>
+              </label>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-large btn-primary btn-submit" id="registerBtn">
+              <span class="btn-text">Create Account</span>
+              <span class="btn-loader" id="btnLoader" style="display: none;">⏳</span>
+            </button>
+
+            <!-- Messages -->
+            <div id="registerMsg" class="auth-message" style="display: none;"></div>
+          </form>
+
+          <!-- Login Link -->
+          <div class="auth-footer">
+            <p>Already have an account? <a href="login.html" class="auth-link">Login here</a></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Side: Benefits -->
+      <div class="auth-feature-section">
+        <div class="auth-feature-content">
+          <h3 class="feature-section-title">Why Join Sell-It UG?</h3>
+
+          <div class="feature-box">
+            <div class="feature-icon">🚀</div>
+            <h4>Quick Setup</h4>
+            <p>Create account in 2 minutes and start selling immediately</p>
+          </div>
+
+          <div class="feature-box">
+            <div class="feature-icon">💰</div>
+            <h4>Zero Fees First Year</h4>
+            <p>No setup, registration, or listing fees. Pay only on sales</p>
+          </div>
+
+          <div class="feature-box">
+            <div class="feature-icon">🌍</div>
+            <h4>Reach Thousands</h4>
+            <p>Access to 100,000+ monthly shoppers across Uganda</p>
+          </div>
+
+          <div class="feature-box">
+            <div class="feature-icon">⭐</div>
+            <h4>Build Trust</h4>
+            <p>Earn seller ratings and build your reputation</p>
+          </div>
+
+          <div class="feature-box">
+            <div class="feature-icon">🛡️</div>
+            <h4>Secure Payments</h4>
+            <p>Your data is protected with military-grade encryption</p>
+          </div>
+
+          <div class="feature-box">
+            <div class="feature-icon">📞</div>
+            <h4>24/7 Support</h4>
+            <p>Get help anytime with our dedicated support team</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ==================== SCRIPTS ==================== -->
+  <script src="app-improved.js"></script>
   <script>
-    // More robust waiting mechanism
-    let attempts = 0;
-    const maxAttempts = 30; // 3 seconds max
-    
-    function waitForRegisterUser() {
-      if (typeof registerUser !== 'undefined') {
-        console.log(" registerUser found after " + attempts + " attempts");
-        setupFormHandler();
-      } else if (attempts < maxAttempts) {
-        attempts++;
-        setTimeout(waitForRegisterUser, 100);
+    // ==================== FORM ELEMENTS ====================
+    const registerForm = document.getElementById('registerForm');
+    const fullNameInput = document.getElementById('fullName');
+    const emailInput = document.getElementById('email');
+    const phoneInput = document.getElementById('phone');
+    const businessInput = document.getElementById('business');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    const agreeTermsCheckbox = document.getElementById('agreeTerms');
+    const registerMsg = document.getElementById('registerMsg');
+    const registerBtn = document.getElementById('registerBtn');
+    const btnLoader = document.getElementById('btnLoader');
+    const btnText = document.querySelector('.btn-text');
+
+    // Error elements
+    const fullNameError = document.getElementById('fullNameError');
+    const emailError = document.getElementById('emailError');
+    const phoneError = document.getElementById('phoneError');
+    const businessError = document.getElementById('businessError');
+    const passwordError = document.getElementById('passwordError');
+    const confirmPasswordError = document.getElementById('confirmPasswordError');
+    const termsError = document.getElementById('termsError');
+
+    // ==================== PASSWORD VISIBILITY TOGGLES ====================
+    document.getElementById('togglePassword').addEventListener('click', (e) => {
+      e.preventDefault();
+      const isPassword = passwordInput.type === 'password';
+      passwordInput.type = isPassword ? 'text' : 'password';
+      e.target.textContent = isPassword ? '🙈' : '👁️';
+    });
+
+    document.getElementById('toggleConfirm').addEventListener('click', (e) => {
+      e.preventDefault();
+      const isPassword = confirmPasswordInput.type === 'password';
+      confirmPasswordInput.type = isPassword ? 'text' : 'password';
+      e.target.textContent = isPassword ? '🙈' : '👁️';
+    });
+
+    // ==================== PASSWORD STRENGTH INDICATOR ====================
+    passwordInput.addEventListener('input', () => {
+      const password = passwordInput.value;
+      const strengthFill = document.getElementById('strengthFill');
+      const strengthText = document.getElementById('strengthText');
+
+      let strength = 0;
+      let strengthLabel = 'Weak';
+      let strengthColor = '#e74c3c';
+
+      // Length check
+      if (password.length >= 6) strength += 20;
+      if (password.length >= 8) strength += 20;
+      if (password.length >= 12) strength += 10;
+
+      // Character variety
+      if (/[a-z]/.test(password)) strength += 10;
+      if (/[A-Z]/.test(password)) strength += 10;
+      if (/[0-9]/.test(password)) strength += 10;
+      if (/[^a-zA-Z0-9]/.test(password)) strength += 10;
+
+      // Set label and color
+      if (strength < 40) {
+        strengthLabel = 'Weak';
+        strengthColor = '#e74c3c';
+      } else if (strength < 60) {
+        strengthLabel = 'Fair';
+        strengthColor = '#f39c12';
+      } else if (strength < 80) {
+        strengthLabel = 'Good';
+        strengthColor = '#3498db';
       } else {
-        console.error(" registerUser not found after " + maxAttempts + " attempts");
-        document.getElementById('registerMsg').textContent = 'System not ready. Please refresh the page.';
+        strengthLabel = 'Strong';
+        strengthColor = '#27ae60';
+      }
+
+      strengthFill.style.width = strength + '%';
+      strengthFill.style.backgroundColor = strengthColor;
+      strengthText.textContent = `${strengthLabel} password`;
+      strengthText.style.color = strengthColor;
+
+      validatePassword();
+    });
+
+    // ==================== REAL-TIME VALIDATION ====================
+    fullNameInput.addEventListener('blur', validateFullName);
+    emailInput.addEventListener('blur', validateEmail);
+    phoneInput.addEventListener('blur', validatePhone);
+    businessInput.addEventListener('change', validateBusiness);
+    passwordInput.addEventListener('blur', validatePassword);
+    confirmPasswordInput.addEventListener('blur', validateConfirmPassword);
+    agreeTermsCheckbox.addEventListener('change', validateTerms);
+
+    function validateFullName() {
+      const fullName = fullNameInput.value.trim();
+      if (!fullName) {
+        fullNameError.textContent = 'Full name is required';
+        return false;
+      }
+      if (fullName.length < 3) {
+        fullNameError.textContent = 'Full name must be at least 3 characters';
+        return false;
+      }
+      fullNameError.textContent = '';
+      return true;
+    }
+
+    function validateEmail() {
+      const email = emailInput.value.trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!email) {
+        emailError.textContent = 'Email is required';
+        return false;
+      }
+      if (!emailRegex.test(email)) {
+        emailError.textContent = 'Please enter a valid email address';
+        return false;
+      }
+      emailError.textContent = '';
+      return true;
+    }
+
+    function validatePhone() {
+      const phone = phoneInput.value.trim().replace(/\s/g, '');
+      const phoneRegex = /^(?:\+256|0)[0-9]{9}$/;
+      if (!phone) {
+        phoneError.textContent = 'Phone number is required';
+        return false;
+      }
+      if (!phoneRegex.test(phone)) {
+        phoneError.textContent = 'Invalid Uganda phone number (use +256 or 0)';
+        return false;
+      }
+      phoneError.textContent = '';
+      return true;
+    }
+
+    function validateBusiness() {
+      if (!businessInput.value) {
+        businessError.textContent = 'Please select a business type';
+        return false;
+      }
+      businessError.textContent = '';
+      return true;
+    }
+
+    function validatePassword() {
+      const password = passwordInput.value;
+      if (!password) {
+        passwordError.textContent = 'Password is required';
+        return false;
+      }
+      if (password.length < 6) {
+        passwordError.textContent = 'Password must be at least 6 characters';
+        return false;
+      }
+      passwordError.textContent = '';
+      validateConfirmPassword(); // Re-check confirm password
+      return true;
+    }
+
+    function validateConfirmPassword() {
+      const password = passwordInput.value;
+      const confirmPassword = confirmPasswordInput.value;
+      if (!confirmPassword) {
+        confirmPasswordError.textContent = 'Please confirm your password';
+        return false;
+      }
+      if (password !== confirmPassword) {
+        confirmPasswordError.textContent = 'Passwords do not match';
+        return false;
+      }
+      confirmPasswordError.textContent = '';
+      return true;
+    }
+
+    function validateTerms() {
+      if (!agreeTermsCheckbox.checked) {
+        termsError.textContent = 'You must agree to the terms';
+        return false;
+      }
+      termsError.textContent = '';
+      return true;
+    }
+
+    // ==================== FORM SUBMISSION ====================
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Validate all fields
+      if (!validateFullName() || !validateEmail() || !validatePhone() || 
+          !validateBusiness() || !validatePassword() || !validateConfirmPassword() || 
+          !validateTerms()) {
+        showMessage('Please fix the errors above', 'error');
+        return;
+      }
+
+      // Show loading state
+      registerBtn.disabled = true;
+      btnLoader.style.display = 'inline';
+      btnText.style.display = 'none';
+
+      try {
+        const data = {
+          fullName: fullNameInput.value.trim(),
+          email: emailInput.value.trim(),
+          phone: phoneInput.value.trim(),
+          business: businessInput.value,
+          password: passwordInput.value,
+          confirmPassword: confirmPasswordInput.value
+        };
+
+        await registerUser(data);
+
+        showMessage('✓ Account created! Check your email to verify. Redirecting to login...', 'success');
+        
+        // Redirect after 2 seconds
+        setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 2000);
+
+      } catch (error) {
+        registerBtn.disabled = false;
+        btnLoader.style.display = 'none';
+        btnText.style.display = 'inline';
+
+        const errorMessage = error.message || 'Registration failed. Please try again.';
+        showMessage(errorMessage, 'error');
+      }
+    });
+
+    // ==================== MESSAGE DISPLAY ====================
+    function showMessage(message, type) {
+      registerMsg.textContent = message;
+      registerMsg.className = `auth-message auth-message-${type}`;
+      registerMsg.style.display = 'block';
+
+      if (type === 'success') {
+        registerMsg.classList.add('success');
+      } else {
+        registerMsg.classList.add('error');
+      }
+
+      if (type === 'error') {
+        setTimeout(() => {
+          registerMsg.style.display = 'none';
+        }, 5000);
       }
     }
-    
-    function setupFormHandler() {
-      document.getElementById('registerForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const data = {
-          fullName: document.getElementById('fullName').value.trim(),
-          email: document.getElementById('email').value.trim(),
-          phone: document.getElementById('phone').value.trim(),
-          business: document.getElementById('business').value,
-          password: document.getElementById('password').value
-        };
-        const msgEl = document.getElementById('registerMsg');
-        msgEl.textContent = 'Registering...';
-        try {
-          await registerUser(data);
-          msgEl.textContent = 'Account created. Check your email to verify.';
-        } catch (err) {
-          msgEl.textContent = 'Error: ' + err.message;
-        }
-      });
-      console.log(" Form handler setup complete");
+
+    // ==================== REDIRECT IF ALREADY LOGGED IN ====================
+    if (window.firebase && window.firebase.auth) {
+      const user = firebase.auth().currentUser;
+      if (user && user.emailVerified) {
+        // User is already logged in and verified, redirect
+        window.location.href = 'post-product.html';
+      }
     }
-    
-    // Start waiting for registerUser to be available
-    console.log(" Waiting for registerUser to be available...");
-    waitForRegisterUser();
   </script>
 </body>
 </html>
