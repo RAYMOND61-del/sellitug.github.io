@@ -1,43 +1,307 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Login — Sell-It UG</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Login to Sell-It UG - Uganda's trusted digital marketplace. Access your account to sell and buy products.">
+  <meta name="robots" content="noindex, nofollow">
+  
+  <title>Login - Sell-It UG | Uganda's Digital Marketplace</title>
+  <link rel="stylesheet" href="style-improved.css">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <!-- Firebase Compat SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
 </head>
-<body>
-  <header class="header container">
-    <div class="logo">Sell-It UG</div>
-    <nav><a href="index.html">Home</a> <a href="register.html">Register</a></nav>
+
+<body class="auth-body">
+  <!-- ==================== HEADER ==================== -->
+  <header class="header auth-header">
+    <div class="container">
+      <div class="nav-wrapper">
+        <div class="logo">
+          <span class="logo-icon">🛍️</span>
+          <span class="logo-text">Sell-It UG</span>
+        </div>
+
+        <nav class="nav-menu">
+          <a href="index.html" class="nav-link">← Back to Home</a>
+        </nav>
+      </div>
+    </div>
   </header>
 
-  <main class="container form-card">
-    <h1>Login</h1>
-    <form id="loginForm">
-      <label>Email<input id="loginEmail" type="email" required/></label>
-      <label>Password<input id="loginPassword" type="password" required/></label>
-      <button type="submit" class="btn">Login</button>
-    </form>
-    <p id="loginMsg" class="msg"></p>
+  <!-- ==================== AUTH CONTAINER ==================== -->
+  <main class="auth-main">
+    <div class="auth-container">
+      <!-- Left Side: Form -->
+      <div class="auth-form-section">
+        <div class="auth-form-wrapper">
+          <h1 class="auth-title">Welcome Back</h1>
+          <p class="auth-subtitle">Login to your Sell-It UG account to start selling or shopping</p>
+
+          <!-- Login Form -->
+          <form id="loginForm" class="auth-form" novalidate>
+            <!-- Email Field -->
+            <div class="form-group">
+              <label for="loginEmail" class="form-label">Email Address</label>
+              <input 
+                id="loginEmail" 
+                type="email" 
+                placeholder="your@email.com"
+                class="form-input"
+                required
+                autocomplete="email"
+              />
+              <span class="form-error" id="emailError"></span>
+            </div>
+
+            <!-- Password Field -->
+            <div class="form-group">
+              <label for="loginPassword" class="form-label">Password</label>
+              <div class="password-input-wrapper">
+                <input 
+                  id="loginPassword" 
+                  type="password" 
+                  placeholder="Enter your password"
+                  class="form-input"
+                  required
+                  autocomplete="current-password"
+                />
+                <button 
+                  type="button" 
+                  class="toggle-password" 
+                  id="togglePassword"
+                  aria-label="Toggle password visibility"
+                >
+                  👁️
+                </button>
+              </div>
+              <span class="form-error" id="passwordError"></span>
+            </div>
+
+            <!-- Remember Me & Forgot Password -->
+            <div class="form-options">
+              <label class="checkbox-label">
+                <input type="checkbox" id="rememberMe" class="form-checkbox" />
+                <span>Remember me</span>
+              </label>
+              <a href="#" class="forgot-password-link">Forgot password?</a>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-large btn-primary btn-submit" id="loginBtn">
+              <span class="btn-text">Login to Account</span>
+              <span class="btn-loader" id="btnLoader" style="display: none;">⏳</span>
+            </button>
+
+            <!-- Messages -->
+            <div id="loginMsg" class="auth-message" style="display: none;"></div>
+          </form>
+
+          <!-- Register Link -->
+          <div class="auth-footer">
+            <p>Don't have an account? <a href="register.html" class="auth-link">Create one now</a></p>
+          </div>
+
+          <!-- Divider -->
+          <div class="auth-divider">
+            <span>or continue as</span>
+          </div>
+
+          <!-- Guest Options -->
+          <div class="guest-options">
+            <a href="products.html" class="btn btn-sm btn-outline btn-full">
+              Browse as Guest
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Side: Feature Highlight -->
+      <div class="auth-feature-section">
+        <div class="auth-feature-content">
+          <div class="feature-box">
+            <div class="feature-icon">⭐</div>
+            <h3>Trusted Platform</h3>
+            <p>Join thousands of verified sellers and buyers on Uganda's #1 marketplace</p>
+          </div>
+
+          <div class="feature-box">
+            <div class="feature-icon">🚀</div>
+            <h3>Start Selling Fast</h3>
+            <p>Post products in minutes and start earning from your first sale</p>
+          </div>
+
+          <div class="feature-box">
+            <div class="feature-icon">🔒</div>
+            <h3>100% Secure</h3>
+            <p>Your account and transactions are protected with military-grade encryption</p>
+          </div>
+
+          <div class="feature-box">
+            <div class="feature-icon">💬</div>
+            <h3>Direct Support</h3>
+            <p>24/7 customer support to help with any questions or issues</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
 
-  <script src="app.js"></script>
+  <!-- ==================== SCRIPTS ==================== -->
+  <script src="app-improved.js"></script>
   <script>
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('loginEmail').value.trim();
-      const password = document.getElementById('loginPassword').value;
-      const msgEl = document.getElementById('loginMsg');
-      msgEl.textContent = 'Logging in...';
-      try {
-        await loginUser(email, password); // app.js helper
-        // after login, redirect to post product page or dashboard:
-        window.location.href = 'post-product.html';
-      } catch (err) {
-        msgEl.textContent = 'Error: ' + err.message;
+    // ==================== PASSWORD VISIBILITY TOGGLE ====================
+    const togglePasswordBtn = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('loginPassword');
+
+    if (togglePasswordBtn && passwordInput) {
+      togglePasswordBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const isPassword = passwordInput.type === 'password';
+        passwordInput.type = isPassword ? 'text' : 'password';
+        togglePasswordBtn.textContent = isPassword ? '🙈' : '👁️';
+        togglePasswordBtn.classList.toggle('active');
+      });
+    }
+
+    // ==================== FORM VALIDATION ====================
+    const loginForm = document.getElementById('loginForm');
+    const loginEmail = document.getElementById('loginEmail');
+    const loginPassword = document.getElementById('loginPassword');
+    const loginMsg = document.getElementById('loginMsg');
+    const loginBtn = document.getElementById('loginBtn');
+    const btnLoader = document.getElementById('btnLoader');
+    const btnText = document.querySelector('.btn-text');
+    const emailError = document.getElementById('emailError');
+    const passwordError = document.getElementById('passwordError');
+
+    // Real-time validation
+    loginEmail.addEventListener('blur', () => {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(loginEmail.value.trim())) {
+        emailError.textContent = 'Please enter a valid email address';
+        loginEmail.classList.add('input-error');
+      } else {
+        emailError.textContent = '';
+        loginEmail.classList.remove('input-error');
       }
     });
+
+    loginPassword.addEventListener('blur', () => {
+      if (loginPassword.value.length < 6) {
+        passwordError.textContent = 'Password must be at least 6 characters';
+        loginPassword.classList.add('input-error');
+      } else {
+        passwordError.textContent = '';
+        loginPassword.classList.remove('input-error');
+      }
+    });
+
+    // ==================== FORM SUBMISSION ====================
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = loginEmail.value.trim();
+      const password = loginPassword.value;
+      const rememberMe = document.getElementById('rememberMe').checked;
+
+      // Clear previous messages
+      loginMsg.style.display = 'none';
+      emailError.textContent = '';
+      passwordError.textContent = '';
+
+      // Validate
+      if (!email || !password) {
+        showMessage('Please fill in all fields', 'error');
+        return;
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        emailError.textContent = 'Invalid email format';
+        loginEmail.classList.add('input-error');
+        return;
+      }
+
+      if (password.length < 6) {
+        passwordError.textContent = 'Password must be at least 6 characters';
+        loginPassword.classList.add('input-error');
+        return;
+      }
+
+      // Show loading state
+      loginBtn.disabled = true;
+      btnLoader.style.display = 'inline';
+      btnText.style.display = 'none';
+
+      try {
+        await loginUser(email, password);
+
+        // Store remember me preference
+        if (rememberMe) {
+          localStorage.setItem('rememberEmail', email);
+        } else {
+          localStorage.removeItem('rememberEmail');
+        }
+
+        showMessage('✓ Login successful! Redirecting...', 'success');
+        
+        // Redirect after 1.5 seconds
+        setTimeout(() => {
+          window.location.href = 'post-product.html';
+        }, 1500);
+
+      } catch (error) {
+        loginBtn.disabled = false;
+        btnLoader.style.display = 'none';
+        btnText.style.display = 'inline';
+
+        const errorMessage = error.message || 'Login failed. Please try again.';
+        showMessage(errorMessage, 'error');
+      }
+    });
+
+    // ==================== MESSAGE DISPLAY ====================
+    function showMessage(message, type) {
+      loginMsg.textContent = message;
+      loginMsg.className = `auth-message auth-message-${type}`;
+      loginMsg.style.display = 'block';
+
+      if (type === 'success') {
+        loginMsg.classList.add('success');
+      } else {
+        loginMsg.classList.add('error');
+      }
+
+      // Auto-hide error messages after 5 seconds
+      if (type === 'error') {
+        setTimeout(() => {
+          loginMsg.style.display = 'none';
+        }, 5000);
+      }
+    }
+
+    // ==================== REMEMBER ME ====================
+    // Populate email if previously saved
+    const savedEmail = localStorage.getItem('rememberEmail');
+    if (savedEmail) {
+      loginEmail.value = savedEmail;
+      document.getElementById('rememberMe').checked = true;
+    }
+
+    // ==================== REDIRECT IF ALREADY LOGGED IN ====================
+    if (window.firebase && window.firebase.auth) {
+      const user = firebase.auth().currentUser;
+      if (user && user.emailVerified) {
+        // User is already logged in and verified, redirect
+        window.location.href = 'post-product.html';
+      }
+    }
   </script>
 </body>
 </html>
