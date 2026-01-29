@@ -1,21 +1,4 @@
-/* ======================== SELL-IT UG - ENHANCED APP.JS ======================== */
-
-/* ---------------------- Load Firebase Compat SDKs ---------------------- */
-(function loadFirebase() {
-  const sources = [
-    "https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js",
-    "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js",
-    "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js",
-    "https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"
-  ];
-
-  sources.forEach(src => {
-    const script = document.createElement("script");
-    script.src = src;
-    script.async = false;
-    document.head.appendChild(script);
-  });
-})();
+/* ======================== SELL-IT UG - IMPROVED APP.JS ======================== */
 
 /* ---------------------- WAIT FOR FIREBASE ---------------------- */
 function waitForFirebase() {
@@ -28,7 +11,7 @@ function waitForFirebase() {
   });
 }
 
-/* ---------------------- FIREBASE CONFIG (Use Environment Variables in Production) ---------------------- */
+/* ---------------------- FIREBASE CONFIG ---------------------- */
 const firebaseConfig = {
   apiKey: "AIzaSyDigrm5eY5PQ6yePx4Zm9fWbhPea8_7HRw",
   authDomain: "sell-it-ug.firebaseapp.com",
@@ -46,7 +29,10 @@ let currentUser = null;
 (async () => {
   await waitForFirebase();
 
-  firebase.initializeApp(firebaseConfig);
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+  
   auth = firebase.auth();
   db = firebase.firestore();
   storage = firebase.storage();
@@ -83,15 +69,6 @@ const Validators = {
 };
 
 const ErrorHandler = {
-  show: (message, type = 'error') => {
-    console.error(`[${type.toUpperCase()}]`, message);
-    const alertBox = document.createElement('div');
-    alertBox.className = `alert alert-${type}`;
-    alertBox.textContent = message;
-    document.body.appendChild(alertBox);
-    setTimeout(() => alertBox.remove(), 5000);
-  },
-
   handle: (error) => {
     const messages = {
       'auth/email-already-in-use': 'This email is already registered.',
@@ -139,7 +116,6 @@ async function registerUser({ fullName, email, phone, business, password, confir
       lastActive: firebase.firestore.FieldValue.serverTimestamp()
     });
 
-    ErrorHandler.show('✓ Registration successful! Please verify your email.', 'success');
     return user;
   } catch (error) {
     throw new Error(ErrorHandler.handle(error));
@@ -166,7 +142,6 @@ async function loginUser(email, password) {
       lastActive: firebase.firestore.FieldValue.serverTimestamp()
     });
 
-    ErrorHandler.show('✓ Login successful!', 'success');
     return user;
   } catch (error) {
     throw new Error(ErrorHandler.handle(error));
@@ -186,14 +161,12 @@ function updateUIAuthState(user) {
   const navPostProduct = document.getElementById("nav-post-product");
 
   if (user) {
-    // User is logged in
     if (navLogout) navLogout.style.display = "block";
     if (navLogin) navLogin.style.display = "none";
     if (navRegister) navRegister.style.display = "none";
     if (navProfile) navProfile.style.display = "block";
     if (navPostProduct) navPostProduct.style.display = "block";
   } else {
-    // User is logged out
     if (navLogout) navLogout.style.display = "none";
     if (navLogin) navLogin.style.display = "block";
     if (navRegister) navRegister.style.display = "block";
@@ -205,16 +178,12 @@ function updateUIAuthState(user) {
 /* ======================== PRODUCT SYSTEM ======================== */
 async function postProduct({ title, description, price, category, imgFile, condition = "new" }) {
   try {
-    // Validate user is logged in
     if (!currentUser) throw new Error("Please log in first.");
-
-    // Validate inputs
     if (!Validators.title(title)) throw new Error("Title must be 5-100 characters.");
     if (!Validators.description(description)) throw new Error("Description must be 20-5000 characters.");
     if (!Validators.price(price)) throw new Error("Price must be a valid positive number.");
     if (!category) throw new Error("Category is required.");
 
-    // Validate and upload image
     let imageUrl = "";
     if (imgFile) {
       if (!imgFile.type.startsWith("image/")) throw new Error("Please upload a valid image file.");
@@ -229,7 +198,6 @@ async function postProduct({ title, description, price, category, imgFile, condi
       throw new Error("Product image is required.");
     }
 
-    // Create product document
     const productData = {
       title: title.trim(),
       description: description.trim(),
@@ -252,12 +220,10 @@ async function postProduct({ title, description, price, category, imgFile, condi
 
     const docRef = await db.collection("products").add(productData);
 
-    // Update seller's product count
     await db.collection("users").doc(currentUser.uid).update({
       productsCount: firebase.firestore.FieldValue.increment(1)
     });
 
-    ErrorHandler.show('✓ Product posted successfully!', 'success');
     return docRef.id;
   } catch (error) {
     throw new Error(ErrorHandler.handle(error));
@@ -314,12 +280,8 @@ async function searchProducts(searchQuery, category = null, priceRange = { min: 
       const title = product.title.toLowerCase();
       const description = product.description.toLowerCase();
 
-      // Text search
       if (title.includes(searchLower) || description.includes(searchLower)) {
-        // Category filter
         if (category && product.category !== category) return;
-
-        // Price range filter
         if (product.price < priceRange.min || product.price > priceRange.max) return;
 
         results.push({
@@ -362,7 +324,6 @@ async function getProductsByCategory(category, limit = 20) {
   }
 }
 
-/* ======================== SELLER PROFILE & RATINGS ======================== */
 async function getSellerProfile(sellerUid) {
   try {
     const doc = await db.collection("users").doc(sellerUid).get();
@@ -400,7 +361,6 @@ async function rateProduct(productId, rating, review = "") {
 
     const product = productDoc.data();
 
-    // Store rating
     await db.collection("ratings").add({
       productId,
       productTitle: product.title,
@@ -412,7 +372,6 @@ async function rateProduct(productId, rating, review = "") {
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
-    // Update product rating average
     const totalRating = (product.rating * product.totalRatings) + rating;
     const newCount = product.totalRatings + 1;
     const avgRating = totalRating / newCount;
@@ -422,7 +381,6 @@ async function rateProduct(productId, rating, review = "") {
       totalRatings: newCount
     });
 
-    // Update seller rating
     const sellerDoc = await db.collection("users").doc(product.sellerUid).get();
     const sellerData = sellerDoc.data();
     const sellerTotalRating = (sellerData.rating * sellerData.totalRatings) + rating;
@@ -433,8 +391,6 @@ async function rateProduct(productId, rating, review = "") {
       rating: sellerAvgRating,
       totalRatings: sellerNewCount
     });
-
-    ErrorHandler.show('✓ Rating submitted successfully!', 'success');
   } catch (error) {
     throw new Error(ErrorHandler.handle(error));
   }
@@ -462,18 +418,4 @@ async function getProductRating(productId) {
   }
 }
 
-/* ======================== NAV EVENT LISTENERS ======================== */
-document.addEventListener("click", async e => {
-  if (e.target.id === "nav-logout") {
-    try {
-      await logoutUser();
-      ErrorHandler.show('✓ Logged out successfully!', 'success');
-      setTimeout(() => location.href = "index.html", 1000);
-    } catch (error) {
-      ErrorHandler.show(ErrorHandler.handle(error), 'error');
-    }
-  }
-});
-
-console.log("✓ app.js loaded successfully");
-console.log("✓ All functions registered globally");
+console.log("✓ app-improved.js loaded successfully");
